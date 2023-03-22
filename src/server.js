@@ -2,6 +2,7 @@ var express = require('express')
 var viewEngine = require('./config/viewEngine')
 var app = express()
 var homeRouter = require('./routes/home')
+var RentAccRouter = require('./routes/rentacc')
 var apiRouter = require('./routes/api')
 
 const http = require('http');
@@ -18,6 +19,7 @@ socketio(httpServer)
 viewEngine(app)
 
 app.use('/', urlencodedParser, homeRouter)
+app.use('/', urlencodedParser, RentAccRouter)
 app.use('/', urlencodedParser, apiRouter)
 
 httpServer.listen(port, function() {
