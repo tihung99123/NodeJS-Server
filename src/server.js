@@ -2,6 +2,7 @@ var express = require('express')
 var viewEngine = require('./config/viewEngine')
 var app = express()
 var homeRouter = require('./routes/home')
+var menugamesRouter = require('./routes/menugames')
 var RentAccRouter = require('./routes/rentacc')
 var apiRouter = require('./routes/api')
 
@@ -19,6 +20,7 @@ socketio(httpServer)
 viewEngine(app)
 
 app.use('/', urlencodedParser, homeRouter)
+app.use('/', urlencodedParser, menugamesRouter)
 app.use('/', urlencodedParser, RentAccRouter)
 app.use('/', urlencodedParser, apiRouter)
 
