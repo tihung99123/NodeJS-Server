@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 18, 2023 at 05:37 AM
+-- Generation Time: Mar 24, 2023 at 10:49 AM
 -- Server version: 10.4.27-MariaDB
 -- PHP Version: 8.2.0
 
@@ -18,16 +18,56 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `serverthueacc`
+-- Database: `servermanagernodejs`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `account`
+-- Table structure for table `menugames_category`
 --
 
-CREATE TABLE `account` (
+CREATE TABLE `menugames_category` (
+  `id` int(11) NOT NULL,
+  `name` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `menugames_itemgames`
+--
+
+CREATE TABLE `menugames_itemgames` (
+  `id_list` int(11) NOT NULL,
+  `id_name` int(11) NOT NULL,
+  `namegames` text NOT NULL,
+  `icon` text NOT NULL,
+  `location` text NOT NULL,
+  `parameter` text NOT NULL,
+  `linkfolder_id` text NOT NULL,
+  `rentaccount` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `menugames_linkid`
+--
+
+CREATE TABLE `menugames_linkid` (
+  `linkid` text NOT NULL,
+  `target_link` text NOT NULL,
+  `source_link` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `rentaccount_account`
+--
+
+CREATE TABLE `rentaccount_account` (
   `id` int(11) NOT NULL,
   `typegame` text NOT NULL,
   `account` text NOT NULL,
@@ -35,10 +75,10 @@ CREATE TABLE `account` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `account`
+-- Dumping data for table `rentaccount_account`
 --
 
-INSERT INTO `account` (`id`, `typegame`, `account`, `password`) VALUES
+INSERT INTO `rentaccount_account` (`id`, `typegame`, `account`, `password`) VALUES
 (1, 's1', 'zxfzxf', ''),
 (2, 'setting', 'sdfsd', 'gsd'),
 (3, 's1', 'asdasdasdasd', ''),
@@ -52,10 +92,10 @@ INSERT INTO `account` (`id`, `typegame`, `account`, `password`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `donateaccount`
+-- Table structure for table `rentaccount_donateaccount`
 --
 
-CREATE TABLE `donateaccount` (
+CREATE TABLE `rentaccount_donateaccount` (
   `typegame` text NOT NULL,
   `account` text NOT NULL,
   `password` text NOT NULL
@@ -64,29 +104,29 @@ CREATE TABLE `donateaccount` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `namegame`
+-- Table structure for table `rentaccount_namegame`
 --
 
-CREATE TABLE `namegame` (
+CREATE TABLE `rentaccount_namegame` (
   `typegame` text NOT NULL,
   `settingmacro` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `namegame`
+-- Dumping data for table `rentaccount_namegame`
 --
 
-INSERT INTO `namegame` (`typegame`, `settingmacro`) VALUES
+INSERT INTO `rentaccount_namegame` (`typegame`, `settingmacro`) VALUES
 ('setting', 'setiing'),
 ('s1', 'safaf');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `status`
+-- Table structure for table `rentaccount_status`
 --
 
-CREATE TABLE `status` (
+CREATE TABLE `rentaccount_status` (
   `id` int(11) NOT NULL,
   `typegame` text NOT NULL,
   `account` text NOT NULL,

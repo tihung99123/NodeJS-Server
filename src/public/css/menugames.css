@@ -1,0 +1,52 @@
+div:hover {
+    cursor: grab;
+}
+
+.col1,
+.col2,
+.col3,
+.col4 {
+    color: white;
+    padding: 1.5rem;
+}
+
+.col1 {
+    background-color: blue;
+}
+
+.col2 {
+    background-color: red;
+}
+
+.col3 {
+    background-color: green;
+}
+
+.col4 {
+    background-color: orange;
+}
+
+.gridstrap-cell-visible {
+    position: absolute !important;
+    transition: width 0.2s, height 0.2s, left 0.2s, top 0.2s;
+}
+
+.gridstrap-cell-hidden {
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+}
+
+.gridstrap-cell-drag {
+    transition: width 50ms, height 50ms, left 50ms, top 50ms;
+    z-index: 10000;
+}
+
+.gridstrap-cell-resize {
+    transition: width 50ms, height 50ms, left 50ms, top 50ms;
+    z-index: 10000;
+}
+
+.gridstack-noncontiguous {
+    opacity: 0;
+}

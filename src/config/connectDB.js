@@ -4,10 +4,10 @@ var conn = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "",
-    database: "serverthueacc"
+    database: "servermanagernodejs"
 })
 
-conn.connect(function (err) {
+conn.connect(function(err) {
     if (err) console.log('Kết nối đến database không thành công!')
 })
 
