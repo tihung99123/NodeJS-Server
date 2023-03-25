@@ -3,7 +3,7 @@ import socketio
 from tkinter import messagebox
 import os
 
-typegame = "setting"
+typegame = "sdsd"
 
 try:
     client = socketio.Client()

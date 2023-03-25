@@ -23,27 +23,32 @@
                     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddCategory">Thêm Thể Loại</button>
                 </div>
                 <div>
-                    <table class="table">
-                        <thead>
-                            <tr style="text-align: center;">
-                                <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">ID</th>
-                                <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Tên Games</th>
-                                <th scope="col" style="text-align: right;"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td style="border-left: 1px solid;border-right: 1px solid;">
-                                </td>
-                                <td style="border-left: 1px solid;border-right: 1px solid;">
-                                </td>
-                                <td style="text-align: right;">
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory">Chỉnh sửa</button>
-                                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory">Xoá</button>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <% var List_Category = JSON.parse(List_Category) %>
+                        <table class="table">
+                            <thead>
+                                <tr style="text-align: center;">
+                                    <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">ID</th>
+                                    <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Tên Games</th>
+                                    <th scope="col" style="text-align: right;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% for (var key in List_Category) { %>
+                                    <tr>
+                                        <td style="border-left: 1px solid;border-right: 1px solid;">
+                                            <%= List_Category[key]["id"] %>
+                                        </td>
+                                        <td style="border-left: 1px solid;border-right: 1px solid;">
+                                            <%= List_Category[key]["name"] %>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory">Chỉnh sửa</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory">Xoá</button>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+                        </table>
                 </div>
             </div>
         </div>
@@ -77,12 +82,12 @@
                 </div>
                 <div class="modal-body">
                     <!-- Input -->
-                    <form action="/rentacc/add-typegame" method="POST">
+                    <form action="/menugames/add-category" method="POST">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Tên thể loại</span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Nhập vào đây" name="typegame">
+                            <input type="text" class="form-control" placeholder="Nhập vào đây" name="category_name">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>

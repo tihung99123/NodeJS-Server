@@ -19,7 +19,7 @@ const socketio = (httpServer) => {
             server.disconnect()
         })
         server.on('GETLISTACCOUNT', (typegame) => {
-            dbpool.query('SELECT * FROM `rentaccount_account` AS t1 WHERE NOT EXISTS ( SELECT 1 FROM `rentaccount_status` AS t2 WHERE t2.ID = t1.ID ) AND t1.typegame = "setting";',
+            dbpool.query('SELECT * FROM `rentaccount_account` AS t1 WHERE NOT EXISTS ( SELECT 1 FROM `rentaccount_status` AS t2 WHERE t2.ID = t1.ID ) AND t1.typegame = ?;',
                 typegame,
                 function(err, listaccount) {
                     if (err) {
