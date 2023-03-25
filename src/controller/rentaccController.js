@@ -46,7 +46,6 @@ let editTypeGame = async(req, res) => {
 let delTypeGame = async(req, res) => {
     let typegame = req.body.typegame;
     await dbpool.execute('DELETE FROM rentaccount_namegame WHERE typegame = ?', [typegame])
-    await dbpool.execute(`DROP TABLE rentaccount_account_${typegame}`)
     await dbpool.execute('DELETE FROM rentaccount_account WHERE typegame = ?', [typegame])
     return res.redirect('/rentacc');
 }
@@ -70,11 +69,16 @@ let addAccount = async(req, res) => {
                             if (err) {
                                 console.log('Lỗi không kết nối được cơ sở dữ liệu');
                             } else {
-                                if (account == "") {
-                                    dbpool.execute(`insert into rentaccount_account(id, typegame, account, password) values (?, ?, ?, ?)`, [countid[0]['id'] + 1, typegame, taikhoan, matkhau]);
+                                if (countid.length == 0) {
+                                    dbpool.execute(`insert into rentaccount_account(id, typegame, account, password) values (?, ?, ?, ?)`, [countid.length + 1, typegame, taikhoan, matkhau]);
                                     return res.send(`<script>window.alert("Đã thêm thành công"); window.location.href = "/rentacc"; </script>`)
                                 } else {
-                                    return res.send(`<script>window.alert("Thêm thất bại vì đã trùng tài khoản"); window.location.href = "/rentacc"; </script>`)
+                                    if (account == "") {
+                                        dbpool.execute(`insert into rentaccount_account(id, typegame, account, password) values (?, ?, ?, ?)`, [countid[0]['id'] + 1, typegame, taikhoan, matkhau]);
+                                        return res.send(`<script>window.alert("Đã thêm thành công"); window.location.href = "/rentacc"; </script>`)
+                                    } else {
+                                        return res.send(`<script>window.alert("Thêm thất bại vì đã trùng tài khoản"); window.location.href = "/rentacc"; </script>`)
+                                    }
                                 }
                             }
                         })

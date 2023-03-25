@@ -1,0 +1,41 @@
+body {
+    background-color: #1e1e1e;
+}
+
+.table {
+    color: white;
+    background-color: #1e2328;
+}
+
+.tablea-typegame .tablea-settingmacro {
+    border-left: 1px solid;
+    border-right: 1px solid
+}
+
+.table-id {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    width: 0%
+}
+
+.table-typegame {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    width: 15%;
+}
+
+.table-account {
+    border-left: 1px solid;
+    border-right: 1px solid
+}
+
+.table-password {
+    border-left: 1px solid;
+    border-right: 1px solid
+}
+
+.table-client {
+    border-left: 1px solid;
+    border-right: 1px solid;
+    width: 20%
+}

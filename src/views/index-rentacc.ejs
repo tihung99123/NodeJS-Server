@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="refresh" content="10">
+    <meta http-equiv="refresh" content="300">
     <title>Quản lí Account</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.3/dist/jquery.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/javascripts/homePage.js"></script>
+    <script src="/javascripts/rentacc.js"></script>
+    <link rel="stylesheet" href="css/rentacc.css">
 </head>
 
 <body>
@@ -26,8 +27,8 @@
                 <table class="table">
                     <thead>
                         <tr style="text-align: center;">
-                            <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Loại Game</th>
-                            <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Macro Setting</th>
+                            <th scope="col" class="tablea-typegame">Loại Game</th>
+                            <th scope="col" class="tablea-settingmacro">Macro Setting</th>
                             <th scope="col" style="text-align: right;"></th>
                         </tr>
                     </thead>
@@ -35,10 +36,10 @@
                         <tbody>
                             <tr>
                                 <% for (var key in DataType) { %>
-                                    <td style="border-left: 1px solid;border-right: 1px solid;">
+                                    <td class="tablea-typegame">
                                         <%= DataType[key]['typegame']%>
                                     </td>
-                                    <td style="border-left: 1px solid;border-right: 1px solid;">
+                                    <td class="tablea-settingmacro">
                                         <%= DataType[key]['settingmacro'] %>
                                     </td>
                                     <td style="text-align: right;">
@@ -65,11 +66,11 @@
             <table class="table">
                 <thead>
                     <tr style="text-align: center;">
-                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">ID</th>
-                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Loại Game</th>
-                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Tài Khoản</th>
-                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Mật Khẩu</th>
-                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">(Tên Máy) ---- (Id Máy)</th>
+                        <th scope="col" class="table-id">ID</th>
+                        <th scope="col" class="table-typegame">Loại Game</th>
+                        <th scope="col" class="table-account">Tài Khoản</th>
+                        <th scope="col" class="table-password">Mật Khẩu</th>
+                        <th scope="col" class="table-client">(Tên Máy) ---- (Id Máy)</th>
                         <th scope="col" style="text-align: center;"></th>
                     </tr>
                 </thead>
@@ -77,19 +78,19 @@
                     <tbody>
                         <tr>
                             <% for (var key in DataAccount) { %>
-                                <td style="border-left: 1px solid;border-right: 1px solid;width: 0%;">
+                                <td class="table-id">
                                     <%= DataAccount[key]['id']%>
                                 </td>
-                                <td style="border-left: 1px solid;border-right: 1px solid;width: 15%;">
+                                <td class="table-typegame">
                                     <%= DataAccount[key]['typegame']%>
                                 </td>
-                                <td style="border-left: 1px solid;border-right: 1px solid;">
+                                <td class="table-account">
                                     <%= DataAccount[key]['account']%>
                                 </td>
-                                <td style="border-left: 1px solid;border-right: 1px solid;">
+                                <td class="table-password">
                                     <%= DataAccount[key]['password']%>
                                 </td>
-                                <td style="border-left: 1px solid;border-right: 1px solid;width: 20%;">
+                                <td class="table-client">
                                     <%= DataAccount[key]['clientid']%> ----
                                         <%= DataAccount[key]['clientname']%>
                                 </td>
@@ -154,26 +155,30 @@
                 <div class="modal-body">
                     <!-- Input -->
                     <form action="/rentacc/edit-typegame" method="POST">
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Tên Loại Game</span>
-                            </div>
-                            <input type="text" class="form-control" hidden id="typegameold-input" name="typegameold">
-                            <input type="text" class="form-control" name="typegamenew">
-                        </div>
 
-                        <div class="input-group mb-3">
-                            <div class="input-group-prepend">
-                                <span class="input-group-text">Tên Macro</span>
+                        <body>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Tên Loại Game</span>
+                                </div>
+                                <input type="text" class="form-control" hidden id="typegameold-input" name="typegameold">
+                                <input type="text" class="form-control" name="typegamenew">
                             </div>
-                            <input type="text" class="form-control" hidden id="settingmacroold-input" name="settingmacroold">
-                            <input type="text" class="form-control" name="settingmacronew">
-                        </div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                            <button type="submit" class="btn btn-primary">Chỉnh sửa</button>
-                        </div>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Tên Macro</span>
+                                </div>
+                                <input type="text" class="form-control" hidden id="settingmacroold-input" name="settingmacroold">
+                                <input type="text" class="form-control" name="settingmacronew">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                                <button type="submit" class="btn btn-primary">Chỉnh sửa</button>
+                            </div>
+
+                        </body>
                     </form>
                 </div>
             </div>

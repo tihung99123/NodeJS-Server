@@ -3,7 +3,15 @@ let getHomepage = function(req, res) {
 }
 
 let SendAllDataListGames = function(req, res) {
-    console.log(JSON.stringify(req.body));
+    // console.log(req.body.item.length);
+    for (let key in req.body.item) {
+        console.log(req.body.item[key].IDList);
+        console.log(req.body.item[key].IDName);
+    }
+}
+
+let addCategory = function(req, res) {
+
 }
 
 module.exports = { getHomepage, SendAllDataListGames }
