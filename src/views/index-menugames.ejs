@@ -11,6 +11,7 @@
     <script src='https://rosspi.github.io/gridstrap.js/jquery.gridstrap.js'></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="javascripts/menugames.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.7.2/dropzone.min.css" />
 
 </head>
 
@@ -63,10 +64,25 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalSaveListGames">Lưu Lại</button>
         </div>
         <div id="basic-grid" class="row text-center">
-            <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-1" ondblclick="Edit_SetGame('name?','id?')">
-                <img src="./asdas" style="width:100">
-                <div class="text-items">Test</div>
-            </div>
+            <% var List_ItemGames = JSON.parse(List_ItemGames) %>
+                <% for (var key in List_ItemGames) { %>
+                    <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
+                    `<%= List_ItemGames[key]['name_game'] %>`,
+                    `<%= List_ItemGames[key]['icon'] %>`,
+                    `<%= List_ItemGames[key]['category_id'] %>`,
+                    `<%= List_ItemGames[key]['name_game'] %>`,
+                    `<%= List_ItemGames[key]['folder'] %>`,
+                    `<%= List_ItemGames[key]['exe'] %>`,
+                    `<%= List_ItemGames[key]['parameter'] %>`,
+                    `<%= List_ItemGames[key]['linkfolder_target'] %>`,
+                    `<%= List_ItemGames[key]['linkfolder_link'] %>`,
+                    `<%= List_ItemGames[key]['reg_id'] %>`)">
+                        <img src="./images/<%= List_ItemGames[key]['id_list'] %>" disabled>
+                        <div class="text-items">
+                            <%= List_ItemGames[key]['name_game'] %>
+                        </div>
+                    </div>
+                    <% } %>
         </div>
     </div>
 
@@ -159,76 +175,84 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="ModalAddGameLabel">Lưu Lại danh sách game</h5>
+                    <h5 class="modal-title" id="ModalAddGameLabel">Thêm game</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
                 </div>
                 <div class="modal-body">
-                    <label>Icon:</label>
-                    <div style="width: 100%;display: block;height: 3cm;">
-                        <div class="uploadOuter" style="display: inline-block;">
-                            <span class="dragBox">
-                                Nhấp hoặc kéo thả vào đây!
-                                <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="uploadFile"  />
-                            </span>
+
+                    <body>
+                        <label>Biểu tượng game:</label>
+                        <div style="width: 100%;display: block;height: 4cm;">
+                            <div class="uploadOuter dropzone" id="dropzone-imageicongame" style="display: inline-block;">
+                                <span class="dragBox">
+                                    Nhấp hoặc kéo thả vào đây!
+                                    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddGame"  />
+                                </span>
+                            </div>
+                            <div id="preview" style="display: inline-block;width: 35%;"></div>
                         </div>
-                        <div id="preview" style="display: inline-block;width: 45%;"></div>
-                    </div>
-                    <div>
-                        <table>
-                            <tr>
-                                <td>id_list:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                            <tr>
-                                <td>id_name:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                            <tr>
-                                <td>category_id:</td>
-                                <td><select class="form-select" aria-label="Default select example">
-                                    <option selected>Bấm vào để chọn thể loại</option>
-                                    <option value="1">One</option>
-                                    <option value="2">Two</option>
-                                    <option value="3">Three</option>
-                                  </select></td>
-                            </tr>
-                            <tr>
-                                <td>name_game:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>name_disk:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>folder:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>exe:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>parameter:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>linkfolder_id:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                            <tr>
-                                <td>reg_id:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                        </table>
-                    </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td>Thể Loại:</td>
+                                    <td><select id="category_id" class="form-select" aria-label="Default select example">
+                                        <option selected>Bấm vào để chọn thể loại</option>
+                                        <% for (var key in List_Category) { %>
+                                        <option value="<%= List_Category[key]['name'] %>"><%= List_Category[key]["name"] %></option>
+                                        <% } %>
+                                      </select></td>
+                                </tr>
+                                <tr>
+                                    <td>Tên Game:</td>
+                                    <td><input type="text" placeholder="Nhập tên" id="name_game"></td>
+                                </tr>
+                                <tr>
+                                    <td>Thư Mục:</td>
+                                    <td><input type="text" placeholder="Nhập đường dẫn" id="folder"></td>
+                                </tr>
+                                <tr>
+                                    <td>File.EXE:</td>
+                                    <td><input type="text" placeholder="Nhập file.exe" id="exe"></td>
+                                </tr>
+                                <tr>
+                                    <td>Hậu tố:</td>
+                                    <td><input type="text" placeholder="Nhập hậu tố" id="parameter"></td>
+                                </tr>
+                                <tr>
+                                    <td>Link Folder:</td>
+                                    <td>
+                                        <div style="display: block;">
+                                            <div id="addinputtargetlink" style="width: 40%;display: inline-block">
+                                                <input type="text" id="target0" placeholder="Target" style="width: 100%;">
+                                            </div>
+                                            <div id="addinputlinklink" style="width: 40%; display: inline-block;">
+                                                <input type="text" id="link0" placeholder="Link" style="width: 100%;">
+                                            </div>
+                                        </div>
+                                        <button onclick="_addinput('link')">Thêm</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>File Reg:</td>
+                                    <td>
+                                        <div style="display: block;">
+                                            <div id="addinputregreg" style="width: 40%;display: inline-block">
+                                                <input type="text" id="reg0" placeholder="Reg" style="width: 100%;">
+                                            </div>
+                                        </div>
+                                        <button onclick="_addinput('reg')">Thêm</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </body>
                 </div>
                 <div class="modal-footer">
                     <input hidden id="del-typegameinput" name="typegame">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
-                    <button type="submit" class="btn btn-primary" onclick="CHECKOKSAVE()">Chấp nhận</button>
+                    <button type="submit" class="btn btn-primary" onclick="_addGame()">Chấp nhận</button>
                 </div>
             </div>
         </div>
@@ -267,64 +291,79 @@
                 </button>
                 </div>
                 <div class="modal-body">
-                    <label>Icon:</label>
-                    <div style="width: 100%;display: block;height: 3cm;">
-                        <div class="uploadOuter" style="display: inline-block;">
-                            <span class="dragBox">
-                                Nhấp hoặc kéo thả vào đây!
-                                <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="uploadFile"  />
-                            </span>
+
+                    <body>
+                        <label>Biểu tượng game:</label>
+                        <div style="width: 100%;display: block;height: 4cm;">
+                            <div class="uploadOuter dropzone" id="dropzone-imageicongame" style="display: inline-block;">
+                                <span class="dragBox">
+                                    Nhấp hoặc kéo thả vào đây!
+                                    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddGame"  />
+                                </span>
+                            </div>
+                            <div id="preview-edit" style="display: inline-block;width: 35%;"></div>
                         </div>
-                        <div id="preview" style="display: inline-block;width: 45%;"></div>
-                    </div>
-                    <div>
-                        <table>
-                            <tr>
-                                <td>id_list:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                            <tr>
-                                <td>id_name:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                            <tr>
-                                <td>category_id:</td>
-                                <td><input type="text" placeholder="select?"></td>
-                            </tr>
-                            <tr>
-                                <td>name_game:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>name_disk:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>folder:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>exe:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>parameter:</td>
-                                <td><input type="text" placeholder="press?"></td>
-                            </tr>
-                            <tr>
-                                <td>linkfolder_id:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                            <tr>
-                                <td>reg_id:</td>
-                                <td><input type="text" placeholder="random?" disabled></td>
-                            </tr>
-                        </table>
-                    </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td>API / ID Game:</td>
+                                    <td id="api_id-edit"></td>
+                                </tr>
+                                <tr>
+                                    <td>Thể Loại:</td>
+                                    <td><select class="form-select" aria-label="Default select example">
+                                        <option id="category_id-edit" selected>Bấm vào để chọn thể loại</option>
+                                        <% for (var key in List_Category) { %>
+                                        <option value="<%= List_Category[key]['name'] %>"><%= List_Category[key]["name"] %></option>
+                                        <% } %>
+                                      </select></td>
+                                </tr>
+                                <tr>
+                                    <td>Tên Game:</td>
+                                    <td><input type="text" placeholder="Nhập tên" id="name_game-edit"></td>
+                                </tr>
+                                <tr>
+                                    <td>Thư Mục:</td>
+                                    <td><input type="text" placeholder="Nhập đường dẫn" id="folder-edit"></td>
+                                </tr>
+                                <tr>
+                                    <td>File.EXE:</td>
+                                    <td><input type="text" placeholder="Nhập file.exe" id="exe-edit"></td>
+                                </tr>
+                                <tr>
+                                    <td>Hậu tố:</td>
+                                    <td><input type="text" placeholder="Nhập hậu tố" id="parameter-edit"></td>
+                                </tr>
+                                <tr>
+                                    <td>Link Folder:</td>
+                                    <td>
+                                        <div style="display: block;">
+                                            <div id="addinputtargetlink-edit" style="width: 40%;display: inline-block">
+                                            </div>
+                                            <div id="addinputlinklink-edit" style="width: 40%; display: inline-block;">
+                                            </div>
+                                        </div>
+                                        <button onclick="_addinput('link','idgame')">Thêm</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>File Reg:</td>
+                                    <td>
+                                        <div style="display: block;">
+                                            <div id="addinputregreg-edit" style="width: 40%;display: inline-block">
+                                            </div>
+                                        </div>
+                                        <button onclick="_addinput('reg','idgame')">Thêm</button>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </body>
                 </div>
                 <div class="modal-footer">
                     <input hidden id="del-typegameinput" name="typegame">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
+                    <button type="submit" class="btn btn-danger">Xoá</button>
                     <button type="submit" class="btn btn-primary">Chấp nhận</button>
                 </div>
             </div>

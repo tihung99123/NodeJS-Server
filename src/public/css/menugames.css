@@ -10,12 +10,18 @@ div:hover {
     cursor: grab;
 }
 
-.col1 {
-    color: white;
-    padding: 1.5rem;
+img {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-right-radius: 5px;
+    object-fit: cover;
+    height: inherit;
+    width: inherit;
 }
 
 .col1 {
+    padding: inherit;
+    height: 95px;
     background-color: transparent;
     border: 1px white solid;
     border-radius: 5px;
@@ -30,10 +36,15 @@ div:hover {
 }
 
 .text-items {
+    font-weight: 500;
+    color: black;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: inherit;
+    height: inherit;
+    word-break: break-word;
 }
 
 .gridstrap-cell-visible {
@@ -97,10 +108,14 @@ div:hover {
     transform: scale(1.1);
 }
 
-#preview {
+#preview #preview-edit {
     text-align: center;
 }
 
 #preview img {
+    max-width: 50%;
+}
+
+#preview-edit img {
     max-width: 50%;
 }

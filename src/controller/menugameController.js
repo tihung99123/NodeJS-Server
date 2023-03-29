@@ -6,7 +6,14 @@ let getHomepage = function(req, res) {
         if (err) {
             console.log(err)
         } else {
-            return res.render('index-menugames', { List_Category: JSON.stringify(list_category) })
+            dbpool.query("select * from `menugames_itemgames`", function(err, list_itemgames) {
+                if (err) {
+                    console.log(err)
+                } else {
+                    return res.render('index-menugames', { List_Category: JSON.stringify(list_category), List_ItemGames: JSON.stringify(list_itemgames) })
+                }
+            })
+
         }
     })
 }
@@ -47,4 +54,16 @@ let addCategory = async(req, res) => {
     })
 }
 
-module.exports = { getHomepage, SendAllDataListGames, addCategory }
+let addGame = async(req, res) => {
+    let addaccount = req.body.AddGame
+    let icongame = req.file
+    dbpool.query("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `exe`, `parameter`, `linkfolder_target`, `linkfolder_link`, `reg_id`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2], addaccount[3], addaccount[4], addaccount[5], addaccount[6], addaccount[7]], function(err, addGame) {
+        if (err) {
+            console.log("Lỗi 210", err);
+        } else {
+            console.log("Addgame- Done");
+        }
+    })
+}
+
+module.exports = { getHomepage, SendAllDataListGames, addCategory, addGame }
