@@ -1,6 +1,6 @@
 var dbpool = require('../config/connectDB')
 
-const Account = function (acc) {
+const Account = function(acc) {
     this.typegame = acc.typegame
     this.settingmacro = acc.settingmacro
     this.taikhoan = acc.taihkhoan
@@ -8,7 +8,7 @@ const Account = function (acc) {
     this.tinhtrang = acc.tinhtrang
 }
 
-Account.getacc = function (id) {
+Account.getacc = function(id) {
     var data = {
         typegame: "gametest",
         taikhoan: id,
@@ -18,8 +18,8 @@ Account.getacc = function (id) {
     return data
 }
 
-Account.getalltype = function () {
-    dbpool.query("SELECT * FROM namegame", function (err, data) {
+Account.getalltype = function() {
+    dbpool.query("SELECT * FROM namegame", function(err, data) {
         return data;
     })
 }

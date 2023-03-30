@@ -43,8 +43,9 @@
                                             <%= List_Category[key]["name"] %>
                                         </td>
                                         <td style="text-align: right;">
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory">Chỉnh sửa</button>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory">Xoá</button>
+                                            <%= List_Category[key]["name"] %>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory">Chỉnh sửa</button>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="del_Category(`<%= List_Category[key]['name'] %>`)">Xoá</button>
                                         </td>
                                     </tr>
                                     <% } %>
@@ -77,7 +78,7 @@
                     `<%= List_ItemGames[key]['linkfolder_target'] %>`,
                     `<%= List_ItemGames[key]['linkfolder_link'] %>`,
                     `<%= List_ItemGames[key]['reg_id'] %>`)">
-                        <img src="./images/<%= List_ItemGames[key]['id_list'] %>" disabled>
+                        <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
                         <div class="text-items">
                             <%= List_ItemGames[key]['name_game'] %>
                         </div>
@@ -156,16 +157,11 @@
                 <div class="modal-body">
                     Nếu xoá sẽ mất hết các tài khoản liên quan đến thể loại này. Bạn có chấp nhận xoá ?
                 </div>
-                <form action="/rentacc/del-typegame" method="POST">
-
-                    <body>
-                        <div class="modal-footer">
-                            <input hidden id="del-typegameinput" name="typegame">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
-                            <button type="submit" class="btn btn-primary">Chấp nhận</button>
-                        </div>
-                    </body>
-                </form>
+                <div class="modal-footer">
+                    <input hidden id="del-category" placeholder="">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
+                    <button type="submit" class="btn btn-primary">Chấp nhận</button>
+                </div>
             </div>
         </div>
     </div>
@@ -298,7 +294,7 @@
                             <div class="uploadOuter dropzone" id="dropzone-imageicongame" style="display: inline-block;">
                                 <span class="dragBox">
                                     Nhấp hoặc kéo thả vào đây!
-                                    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddGame"  />
+                                    <input type="file" onChange="dragNdrop_edit(event)"  ondragover="drag()" ondrop="drop()" id="EditGame"  />
                                 </span>
                             </div>
                             <div id="preview-edit" style="display: inline-block;width: 35%;"></div>
@@ -320,7 +316,8 @@
                                 </tr>
                                 <tr>
                                     <td>Tên Game:</td>
-                                    <td><input type="text" placeholder="Nhập tên" id="name_game-edit"></td>
+                                    <td><input type="text" placeholder="Nhập tên" id="name_game-edit">
+                                        <input type="text" id="icon-old-edit" hidden></td>
                                 </tr>
                                 <tr>
                                     <td>Thư Mục:</td>
@@ -343,7 +340,7 @@
                                             <div id="addinputlinklink-edit" style="width: 40%; display: inline-block;">
                                             </div>
                                         </div>
-                                        <button onclick="_addinput('link','idgame')">Thêm</button>
+                                        <button onclick="_addinputedit('link','idgame')">Thêm</button>
                                     </td>
                                 </tr>
                                 <tr>
@@ -353,7 +350,7 @@
                                             <div id="addinputregreg-edit" style="width: 40%;display: inline-block">
                                             </div>
                                         </div>
-                                        <button onclick="_addinput('reg','idgame')">Thêm</button>
+                                        <button onclick="_addinputedit('reg','idgame')">Thêm</button>
                                     </td>
                                 </tr>
                             </table>
@@ -363,8 +360,8 @@
                 <div class="modal-footer">
                     <input hidden id="del-typegameinput" name="typegame">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
-                    <button type="submit" class="btn btn-danger">Xoá</button>
-                    <button type="submit" class="btn btn-primary">Chấp nhận</button>
+                    <button type="submit" class="btn btn-danger" onclick="_delGame()">Xoá</button>
+                    <button type="submit" class="btn btn-primary" onclick="_editGame()">Chấp nhận</button>
                 </div>
             </div>
         </div>

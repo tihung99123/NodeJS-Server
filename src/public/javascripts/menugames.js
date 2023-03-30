@@ -62,6 +62,15 @@ function dragNdrop(event) {
     preview.appendChild(previewImg);
 }
 
+function dragNdrop_edit(event) {
+    var fileName = URL.createObjectURL(event.target.files[0]);
+    var preview = document.getElementById("preview-edit");
+    var previewImg = document.createElement("img");
+    previewImg.setAttribute("src", fileName);
+    preview.innerHTML = "";
+    preview.appendChild(previewImg);
+}
+
 function drag() {
     document.getElementById('uploadFile').parentNode.className = 'draging dragBox';
 }
@@ -71,6 +80,7 @@ function drop() {
 }
 
 function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, parameter, linkfolder_target, linkfolder_link, reg_id) {
+
 
     var edit_set_game = document.getElementById('edit-set-game')
     edit_set_game.innerText = "Chỉnh Game - " + name
@@ -88,6 +98,9 @@ function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, 
     var api_id = document.getElementById('api_id-edit')
     api_id.innerText = id_list
     category = document.getElementById('category_id-edit').innerText = category_id
+
+    var icon_old = document.getElementById('icon-old-edit')
+    icon_old.setAttribute("placeholder", icon)
 
     var namegame = document.getElementById('name_game-edit')
     namegame.setAttribute("placeholder", name_game)
@@ -127,30 +140,41 @@ function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, 
     }
 }
 
-function Edit_SetGameSend() {
-    var api_id = document.getElementById("api_id-edit").value
-    var category_id = document.getElementById("category_id-edit").value
-    var name_game = document.getElementById("name_game-edit").value;
-    var folder = document.getElementById("folder-edit").value;
-    var exe = document.getElementById("exe-edit").value;
-    var parameter = document.getElementById("parameter-edit").value;
+function _editGame() {
+    var api_id = document.getElementById("api_id-edit").textContent
+    var category_id = document.getElementById("category_id-edit")
+    var name_game = document.getElementById("name_game-edit");
+    var icon_old = document.getElementById("icon-old-edit");
+    var folder = document.getElementById("folder-edit");
+    var exe = document.getElementById("exe-edit");
+    var parameter = document.getElementById("parameter-edit");
 
     var listTarget_Link = document.querySelector("#addinputtargetlink-edit").children;
     var listTarget_Array = Array.from(listTarget_Link);
     var Linklist_target = []
     listTarget_Array.forEach((item) => {
-        if (item.id.includes("target")) {
-            var target = document.getElementById(item.id).value
-            Linklist_target.push({ Tag_Target: item.id, Target: target })
+        if (item.id.includes("target-edit-")) {
+            var targetA = document.getElementById(item.id).value
+            var targetB = document.getElementById(item.id).placeholder
+            if (targetA.length > 0) {
+                Linklist_target.push({ Tag_Reg: item.id, File: targetA })
+            } else {
+                Linklist_target.push({ Tag_Reg: item.id, File: targetB })
+            }
         }
     });
     var listLink_Link = document.querySelector("#addinputlinklink-edit").children;
     var listLink_Array = Array.from(listLink_Link);
     var Linklist_link = []
     listLink_Array.forEach((item) => {
-        if (item.id.includes("link")) {
-            var link = document.getElementById(item.id).value
-            Linklist_link.push({ Tag_Link: item.id, Link: link })
+        if (item.id.includes("link-edit-")) {
+            var linkA = document.getElementById(item.id).value
+            var linkB = document.getElementById(item.id).placeholder
+            if (linkA.length > 0) {
+                Linklist_link.push({ Tag_Reg: item.id, File: linkA })
+            } else {
+                Linklist_link.push({ Tag_Reg: item.id, File: linkB })
+            }
         }
     });
 
@@ -158,39 +182,69 @@ function Edit_SetGameSend() {
     var listReg_Array = Array.from(listReg);
     var LinkReg_List = []
     listReg_Array.forEach((item) => {
-        if (item.id.includes("reg")) {
-            var REG_File = document.getElementById(item.id).value
-            LinkReg_List.push({ Tag_Reg: item.id, File: REG_File })
+        if (item.id.includes("reg-edit-")) {
+            var REG_FileA = document.getElementById(item.id).value
+            var REG_FileB = document.getElementById(item.id).placeholder
+            if (REG_FileA.length > 0) {
+                LinkReg_List.push({ Tag_Reg: item.id, File: REG_FileA })
+            } else {
+                LinkReg_List.push({ Tag_Reg: item.id, File: REG_FileB })
+            }
         }
     });
 
     const fileInput = document.getElementById('EditGame');
     const file = fileInput.files[0];
     const formData = new FormData();
-    const formData1 = new FormData();
     formData.append('EditGame', file);
-    formData.append('EditGame', category_id);
-    formData.append('EditGame', name_game);
-    formData.append('EditGame', folder);
-    formData.append('EditGame', exe);
-    formData.append('EditGame', parameter);
+
+    formData.append('EditGame', api_id);
+
+    formData.append('EditGame', category_id.value);
+
+    if (name_game.value.length > 0) {
+        formData.append('EditGame', name_game.value);
+    } else {
+        formData.append('EditGame', name_game.placeholder);
+    }
+    formData.append('EditGame', icon_old.placeholder);
+
+    if (folder.value.length > 0) {
+        formData.append('EditGame', folder.value);
+    } else {
+        formData.append('EditGame', folder.placeholder);
+    }
+
+    if (exe.value.length > 0) {
+        formData.append('EditGame', exe.value);
+    } else {
+        formData.append('EditGame', exe.placeholder);
+    }
+
+    if (parameter.value.length > 0) {
+        formData.append('EditGame', parameter.value);
+    } else {
+        formData.append('EditGame', parameter.placeholder);
+    }
+
     formData.append('EditGame', JSON.stringify(Linklist_target));
     formData.append('EditGame', JSON.stringify(Linklist_link));
     formData.append('EditGame', JSON.stringify(LinkReg_List));
 
-    fetch('/menugames/add-game', {
+
+    fetch('/menugames/edit-game', {
             method: 'POST',
             body: formData
         })
         .then(response => response.text())
         .then(result => {
-            window.alert("Thêm Thành công");
+            window.alert(result);
+            window.location.href = "/menugames";
         })
         .catch(error => {
-            window.alert("Lỗi khi thêm vui lòng nhập lại hoặc khởi động lai trang.");
+            window.alert("Lỗi khi thêm vui lòng nhập lại hoặc khởi động lại trang.");
         });
 
-    window.location.href = "/menugames";
 
     // $.ajax({
     //     type: "POST",
@@ -211,12 +265,12 @@ function _addinputedit(option, data1, data2) {
         var addinputlink = document.getElementById("addinputlink" + option + "-edit");
         var createinput1 = document.createElement("input")
         createinput1.setAttribute("type", "text")
-        createinput1.setAttribute("id", `target${count_Link}`)
+        createinput1.setAttribute("id", `target-edit-${count_Link}`)
         createinput1.setAttribute("placeholder", data1)
         createinput1.setAttribute("style", "width: 100%")
         var createinput2 = document.createElement("input");
         createinput2.setAttribute("type", "text")
-        createinput2.setAttribute("id", `link${count_Link}`)
+        createinput2.setAttribute("id", `link-edit-${count_Link}`)
         createinput2.setAttribute("placeholder", data2)
         createinput2.setAttribute("style", "width: 100%")
         addinputtarget.appendChild(createinput1)
@@ -228,7 +282,7 @@ function _addinputedit(option, data1, data2) {
         var addinput = document.getElementById("addinputreg" + option + "-edit");
         var createinput1 = document.createElement("input")
         createinput1.setAttribute("type", "text")
-        createinput1.setAttribute("id", `reg${count_Reg}`)
+        createinput1.setAttribute("id", `reg-edit-${count_Reg}`)
         createinput1.setAttribute("placeholder", data1)
         addinput.appendChild(createinput1)
     }
@@ -305,7 +359,6 @@ function _addGame() {
     const fileInput = document.getElementById('AddGame');
     const file = fileInput.files[0];
     const formData = new FormData();
-    const formData1 = new FormData();
     formData.append('AddGame', file);
     formData.append('AddGame', category_id);
     formData.append('AddGame', name_game);
@@ -322,20 +375,28 @@ function _addGame() {
         })
         .then(response => response.text())
         .then(result => {
-            window.alert("Thêm Thành công");
+            window.alert(result);
+            window.location.href = "/menugames";
         })
         .catch(error => {
-            window.alert("Lỗi khi thêm vui lòng nhập lại hoặc khởi động lai trang.");
+            window.alert("Lỗi khi thêm vui lòng nhập lại hoặc khởi động lại trang.");
         });
 
-    window.location.href = "/menugames";
 
-    // $.ajax({
-    //     type: "POST",
-    //     url: "./menugames/add-game",
-    //     data: { category_id, name_game, name_disk, folder, exe, parameter, Linklist_target, Linklist_link, LinkReg_List },
-    //     success: function() {
-    //         console.log("done");
-    //     }
-    // });
+}
+
+function _delGame() {
+    var api_id = document.getElementById("api_id-edit").textContent
+    var icon_old = document.getElementById("icon-old-edit").placeholder;
+
+    $.ajax({
+        type: "POST",
+        url: "./menugames/del-game",
+        data: { api_id, icon_old },
+        success: function(finish) {
+            window.alert(finish);
+            window.location.href = "/menugames";
+        }
+    });
+
 }
