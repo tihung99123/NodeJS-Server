@@ -1,7 +1,7 @@
 var express = require("express")
 const multer = require('multer');
 
-var menugamesController = require("../controller/menugameController")
+var menugamesController = require("../controller/menugamesController")
 
 var router = express.Router()
 const upload = multer({ dest: 'src/public/images/' });

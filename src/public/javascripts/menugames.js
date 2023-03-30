@@ -43,7 +43,7 @@ function CHECKOKSAVE() {
     listArray.forEach((item) => {
         counter++;
         if (item.id.includes("id_games-")) {
-            itemlist.push({ IDList: counter, IDName: item.id })
+            itemlist.push({ number: counter, api_id: item.getAttribute("api_id") })
         }
     });
     updateOrder(itemlist)
@@ -157,9 +157,9 @@ function _editGame() {
             var targetA = document.getElementById(item.id).value
             var targetB = document.getElementById(item.id).placeholder
             if (targetA.length > 0) {
-                Linklist_target.push({ Tag_Reg: item.id, File: targetA })
+                Linklist_target.push({ Tag_Target: item.id, Target: targetA })
             } else {
-                Linklist_target.push({ Tag_Reg: item.id, File: targetB })
+                Linklist_target.push({ Tag_Target: item.id, File: targetB })
             }
         }
     });
@@ -171,9 +171,9 @@ function _editGame() {
             var linkA = document.getElementById(item.id).value
             var linkB = document.getElementById(item.id).placeholder
             if (linkA.length > 0) {
-                Linklist_link.push({ Tag_Reg: item.id, File: linkA })
+                Linklist_link.push({ Tag_Link: item.id, Link: linkA })
             } else {
-                Linklist_link.push({ Tag_Reg: item.id, File: linkB })
+                Linklist_link.push({ Tag_Link: item.id, Link: linkB })
             }
         }
     });
@@ -388,7 +388,6 @@ function _addGame() {
 function _delGame() {
     var api_id = document.getElementById("api_id-edit").textContent
     var icon_old = document.getElementById("icon-old-edit").placeholder;
-
     $.ajax({
         type: "POST",
         url: "./menugames/del-game",
@@ -398,5 +397,8 @@ function _delGame() {
             window.location.href = "/menugames";
         }
     });
+}
 
+function del_Category(category_in) {
+    document.getElementById("del-category").setAttribute("value", category_in)
 }

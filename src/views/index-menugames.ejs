@@ -43,9 +43,8 @@
                                             <%= List_Category[key]["name"] %>
                                         </td>
                                         <td style="text-align: right;">
-                                            <%= List_Category[key]["name"] %>
-                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory">Chỉnh sửa</button>
-                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="del_Category(`<%= List_Category[key]['name'] %>`)">Xoá</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory">Chỉnh sửa</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="del_Category(`<%= List_Category[key]['id'] %>`)">Xoá</button>
                                         </td>
                                     </tr>
                                     <% } %>
@@ -67,7 +66,7 @@
         <div id="basic-grid" class="row text-center">
             <% var List_ItemGames = JSON.parse(List_ItemGames) %>
                 <% for (var key in List_ItemGames) { %>
-                    <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
+                    <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" api_id="<%= List_ItemGames[key]['id_list'] %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
                     `<%= List_ItemGames[key]['name_game'] %>`,
                     `<%= List_ItemGames[key]['icon'] %>`,
                     `<%= List_ItemGames[key]['category_id'] %>`,
@@ -158,9 +157,11 @@
                     Nếu xoá sẽ mất hết các tài khoản liên quan đến thể loại này. Bạn có chấp nhận xoá ?
                 </div>
                 <div class="modal-footer">
-                    <input hidden id="del-category" placeholder="">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
-                    <button type="submit" class="btn btn-primary">Chấp nhận</button>
+                    <form action="/menugames/del-category" method="POST">
+                        <input hidden id="del-category" name="Del_Category">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
+                        <button type="submit" class="btn btn-primary">Chấp nhận</button>
+                    </form>
                 </div>
             </div>
         </div>

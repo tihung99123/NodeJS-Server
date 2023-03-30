@@ -7,7 +7,7 @@ let getHomepage = function(req, res) {
         if (err) {
             console.log(err)
         } else {
-            dbpool.query("select * from `menugames_itemgames`", function(err, list_itemgames) {
+            dbpool.query("SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;", function(err, list_itemgames) {
                 if (err) {
                     console.log(err)
                 } else {
@@ -19,12 +19,13 @@ let getHomepage = function(req, res) {
     })
 }
 
-let SendAllDataListGames = function(req, res) {
-    // console.log(req.body.item.length);
-    for (let key in req.body.item) {
-        console.log(req.body.item[key].IDList);
-        console.log(req.body.item[key].IDName);
+let SendAllDataListGames = async(req, res) => {
+    let saved_listgame = req.body.item
+    await dbpool.execute('DELETE FROM `menugames_sortorder`')
+    for (var key in saved_listgame) {
+        await dbpool.execute('insert into menugames_sortorder(number, id_list, id_name) values (?, ?, ?)', [saved_listgame[key].number, saved_listgame[key].api_id, saved_listgame[key].api_id])
     }
+    res.redirect("/menugames")
 }
 
 let addCategory = async(req, res) => {
@@ -34,7 +35,7 @@ let addCategory = async(req, res) => {
             console.log("Lỗi:", err);
         } else {
             if (insert == "") {
-                dbpool.query("SELECT COUNT(id) as `count` FROM `menugames_category`;", function(err, count) {
+                dbpool.query("SELECT id FROM `menugames_category` ORDER BY id DESC LIMIT 1;", function(err, count) {
                     if (err) {
                         console.log("Lỗi:", err);
                     } else {
@@ -42,13 +43,12 @@ let addCategory = async(req, res) => {
                             dbpool.execute('insert into menugames_category(id, name) values (?, ?)', ["1", category_name]);
                             return res.send(`<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
                         } else {
-                            dbpool.execute('insert into menugames_category(id, name) values (?, ?)', [count[0]['count'] + 1, category_name]);
+                            dbpool.execute('insert into menugames_category(id, name) values (?, ?)', [count[0]['id'] + 1, category_name]);
                             return res.send(`<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
                         }
                     }
                 })
             } else {
-                console.log("Có", insert);
                 return res.send(`<script>window.alert("Thêm Thất Bại Vì đã trùng thể loại"); window.location.href = "/menugames"; </script>`)
             }
         }
@@ -56,9 +56,9 @@ let addCategory = async(req, res) => {
 }
 
 let delCategory = async(req, res) => {
-
-    let delGame = req.body.api_id
-    await dbpool.execute(`DELETE FROM menugames_itemgames WHERE id_list = ?`, [delGame])
+    let delGame = req.body.Del_Category
+    await dbpool.execute('DELETE FROM `menugames_category` WHERE id = ?;', [delGame])
+    return res.redirect("/menugames")
 }
 
 let addGame = async(req, res) => {
