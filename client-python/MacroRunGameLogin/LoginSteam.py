@@ -5,7 +5,7 @@ from client import Ui_MainWindow
 class runsteam(object):
     def RunGame(self, path, account, password):
         subprocess.run(''+path+' -login ' + account + ' ' + password,shell=True)
-        Ui_MainWindow.logout(self)
+        Ui_MainWindow.f_btnlogout(self)
     
     def CloseGame():
         CREATE_NO_WINDOW = 0x08000000

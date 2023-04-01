@@ -68,7 +68,15 @@ let addGame = async(req, res) => {
         if (err) {
             console.log("Lỗi 210", err);
         } else {
-            return res.send("Thêm Thành công")
+            dbpool.query("SELECT number FROM `menugames_sortorder` ORDER BY number DESC LIMIT 1;", function(err, count) {
+                if (err) {
+                    console.log("Lỗi:", err);
+                } else {
+                    dbpool.execute('insert into menugames_sortorder(number, id_list, id_name) values (?, ?, ?)', [count[0]['number'] + 1, icongame.filename, icongame.filename]);
+                    return res.send("Thêm Thành công")
+                }
+            })
+
         }
     })
 }
@@ -99,6 +107,7 @@ let delGame = async(req, res) => {
             throw err;
         }
         console.log("Delete File successfully.");
+        return res.redirect("/menugames")
     });
 }
 module.exports = { getHomepage, SendAllDataListGames, addCategory, delCategory, addGame, editGame, delGame }

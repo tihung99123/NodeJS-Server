@@ -5,9 +5,11 @@ const socketio = (httpServer) => {
     const io = require('socket.io')(httpServer, { maxHttpBufferSize: 1e7 });
     io.on('connection', (server) => {
         console.log(server.id, 'is connected');
+
         server.on('message', (data) => {
             console.log('message', data);
         })
+
         server.on('disconnect', () => {
             dbpool.query('delete from `rentaccount_status` where clientname = ?', server.id, function(err, deleteclientname) {
                 if (err) {
@@ -18,6 +20,7 @@ const socketio = (httpServer) => {
             })
             server.disconnect()
         })
+
         server.on('GETLISTACCOUNT', (typegame) => {
             dbpool.query('SELECT * FROM `rentaccount_account` AS t1 WHERE NOT EXISTS ( SELECT 1 FROM `rentaccount_status` AS t2 WHERE t2.ID = t1.ID ) AND t1.typegame = ?;',
                 typegame,
@@ -29,6 +32,7 @@ const socketio = (httpServer) => {
                     }
                 })
         })
+
         server.on('LOGINACCOUNT', (data) => {
             data = data.split('|')
             dbpool.query('SELECT * FROM `rentaccount_account` where account = ?', data[0], function(err, account) {
@@ -50,6 +54,7 @@ const socketio = (httpServer) => {
                 }
             })
         })
+
         server.on('LOGOUTACCOUNT', (data) => {
             dbpool.query('delete from `rentaccount_status` where account = ? and clientname = ?', [data, server.id], function(err, deleteclientname) {
                 if (err) {
@@ -62,6 +67,25 @@ const socketio = (httpServer) => {
         server.on('DONATEACCOUNT', (data) => {
             console.log('Quyên góp tài khoản miễn phí', data);
         })
+
+        server.on('GETLISTMENUGAMES', (data) => {
+            console.log(data);
+            dbpool.query("SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;",
+                function(err, listaccount) {
+                    if (err) {
+                        console.log("Lỗi khi kết nối đến database (105)");
+                    } else {
+                        dbpool.query("SELECT * FROM `menugames_category`", function(err, listcategory) {
+                            if (err) {
+                                console.log("Lỗi khi kết nối đến database (105)");
+                            } else {
+
+                            }
+                        })
+                    }
+                })
+        })
+
     })
 }
 

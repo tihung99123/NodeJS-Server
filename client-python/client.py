@@ -1,9 +1,11 @@
 from PyQt6 import QtCore, QtGui, QtWidgets
 import socketio
 from tkinter import messagebox
+import MacroRunGameLogin.LoginSteam as LoginRun
 import os
+import threading
 
-typegame = "sdsd"
+typegame = "Steam"
 
 try:
     client = socketio.Client()
@@ -118,14 +120,19 @@ class Ui_MainWindow(object):
             client.emit('LOGINACCOUNT',self.comboBoxAccount.currentText()+'|'+ os.environ['COMPUTERNAME'])
             @client.event
             def RUNGAMEACCOUNT(data):
-                print(data)
+                # print(data[0]["account"])
+                thread = threading.Thread(target=LoginRun.runsteam.RunGame,args=(self,str('"C:\Program Files (x86)\Steam\steam.exe"'),data[0]["account"],data[0]["password"]))
+                thread.start()
                 self.btnrungame.setDisabled(True)
+                self.btnrefresh.setDisabled(True)
                 self.comboBoxAccount.setDisabled(True)
     
     def f_btnlogout(self):
         client.emit('LOGOUTACCOUNT',self.comboBoxAccount.currentText())
+        LoginRun.runsteam.CloseGame()
         self.f_btnrefresh()
         self.btnrungame.setDisabled(False)
+        self.btnrefresh.setDisabled(False)
         self.comboBoxAccount.setDisabled(False)
     
     def f_btndonateaccount(self):
