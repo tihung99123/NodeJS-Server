@@ -69,9 +69,8 @@ const socketio = (httpServer) => {
         })
 
         server.on('GETLISTMENUGAMES', (data) => {
-            console.log(data);
             dbpool.query("SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;",
-                function(err, listaccount) {
+                function(err, listitemgames) {
                     if (err) {
                         console.log("Lỗi khi kết nối đến database (105)");
                     } else {
@@ -79,7 +78,13 @@ const socketio = (httpServer) => {
                             if (err) {
                                 console.log("Lỗi khi kết nối đến database (105)");
                             } else {
-
+                                dbpool.query("SELECT * FROM `menugames_sortorder`", function(err, sortorder) {
+                                    if (err) {
+                                        console.log("Lỗi khi kết nối đến database (105)");
+                                    } else {
+                                        server.emit("GETLISTMENUGAMES", { 'listitemgames': listitemgames, 'listcategory': listcategory, 'sortorder': sortorder })
+                                    }
+                                })
                             }
                         })
                     }
