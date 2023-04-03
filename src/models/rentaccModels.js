@@ -12,22 +12,6 @@ let getAllAccount = async() => {
     return account
 }
 
-let addTypeGame = async(typegame, settingmacro) => {
-    var sql = "select * from rentaccount_namegame where typegame = ?"
-    dbpool.query(sql, [typegame], function(err, insert) {
-        if (err) {
-            callback(err);
-        } else {
-            if (insert == "") {
-                dbpool.execute('insert into rentaccount_namegame(typegame, settingmacro) values (?, ?)', [typegame, settingmacro]);
-                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/rentacc"; </script>`);
-            } else {
-                callback(null, `<script>window.alert("Thêm Thất Bại Vì đã trùng loại game"); window.location.href = "/rentacc"; </script>`);
-            }
-        }
-    })
-}
-
 module.exports = {
     getAllNameGame,
     getAllAccount,
