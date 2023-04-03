@@ -1,23 +1,13 @@
-var dbpool = require('../config/connectDB')
 const rentaccModels = require('../models/rentaccModels')
 
 let getHomepage = async(req, res) => {
-    await rentaccModels.getAllNameGame((err, namegame) => {
-        if (err) {
-            return res.send(err)
-        } else {
-            rentaccModels.getAllAccount((err, account) => {
-                if (err) {
-                    return res.send({ err })
-                } else {
-                    return res.render('index-rentacc', {
-                        DataType: JSON.stringify(namegame),
-                        DataAccount: JSON.stringify(account)
-                    })
-                }
-            })
-        }
+    let namegame = await rentaccModels.getAllNameGame()
+    let account = await rentaccModels.getAllAccount()
+    return res.render('index-rentacc', {
+        DataType: JSON.stringify(namegame[0]),
+        DataAccount: JSON.stringify(account[0])
     })
+
 }
 
 let addTypeGame = async(req, res) => {

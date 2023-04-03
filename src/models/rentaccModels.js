@@ -1,27 +1,36 @@
 var dbpool = require("../config/connectDB")
 
+let getAllNameGame = async() => {
+    var sql = "SELECT * FROM `rentaccount_namegame`";
+    let namegame = await dbpool.promise().query(sql)
+    return namegame
+}
+
+let getAllAccount = async() => {
+    var sql = "SELECT rentaccount_account.id,rentaccount_account.typegame,rentaccount_account.account,rentaccount_account.password,rentaccount_status.clientid,rentaccount_status.clientname FROM `rentaccount_account` LEFT JOIN `rentaccount_status` ON rentaccount_account.id = rentaccount_status.id;"
+    let account = await dbpool.promise().query(sql)
+    return account
+}
+
+let addTypeGame = async(typegame, settingmacro) => {
+    var sql = "select * from rentaccount_namegame where typegame = ?"
+    dbpool.query(sql, [typegame], function(err, insert) {
+        if (err) {
+            callback(err);
+        } else {
+            if (insert == "") {
+                dbpool.execute('insert into rentaccount_namegame(typegame, settingmacro) values (?, ?)', [typegame, settingmacro]);
+                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/rentacc"; </script>`);
+            } else {
+                callback(null, `<script>window.alert("Thêm Thất Bại Vì đã trùng loại game"); window.location.href = "/rentacc"; </script>`);
+            }
+        }
+    })
+}
 
 module.exports = {
-    getAllNameGame: function(callback = () => {}) {
-        var sql = "SELECT * FROM rentaccount_namegame";
-        dbpool.query(sql, function(err, result) {
-            if (err) {
-                callback(err)
-            } else {
-                callback(null, result)
-            }
-        });
-    },
-    getAllAccount: function(callback = () => {}) {
-        var sql = "SELECT rentaccount_account.id,rentaccount_account.typegame,rentaccount_account.account,rentaccount_account.password,rentaccount_status.clientid,rentaccount_status.clientname FROM `rentaccount_account` LEFT JOIN `rentaccount_status` ON rentaccount_account.id = rentaccount_status.id;"
-        dbpool.query(sql, function(err, result) {
-            if (err) {
-                callback(err)
-            } else {
-                callback(null, result)
-            }
-        });
-    },
+    getAllNameGame,
+    getAllAccount,
     addTypeGame: function(typegame, settingmacro, callback = () => {}) {
         var sql = "select * from rentaccount_namegame where typegame = ?"
         dbpool.query(sql, [typegame], function(err, insert) {

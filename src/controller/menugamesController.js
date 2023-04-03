@@ -1,22 +1,13 @@
 var dbpool = require('../config/connectDB')
+var menugamesModels = require('../models/menugamesModels')
 var fs = require("fs")
 
 
-let getHomepage = function(req, res) {
-    dbpool.query("select * from `menugames_category`", function(err, list_category) {
-        if (err) {
-            console.log(err)
-        } else {
-            dbpool.query("SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;", function(err, list_itemgames) {
-                if (err) {
-                    console.log(err)
-                } else {
-                    return res.render('index-menugames', { List_Category: JSON.stringify(list_category), List_ItemGames: JSON.stringify(list_itemgames) })
-                }
-            })
+let getHomepage = async(req, res) => {
+    let list_category = await menugamesModels.getAllCategory()
+    let list_itemgames = await menugamesModels.getAllItemGames()
+    return res.render('index-menugames', { List_Category: JSON.stringify(list_category[0]), List_ItemGames: JSON.stringify(list_itemgames[0]) })
 
-        }
-    })
 }
 
 let SendAllDataListGames = async(req, res) => {
