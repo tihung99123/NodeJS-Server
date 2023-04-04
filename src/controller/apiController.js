@@ -1,32 +1,62 @@
-var dbpool = require('../config/connectDB')
+var apiModels = require('../models/apiModel')
 
-let GetAllType = function(req, res) {
-    dbpool.query("SELECT * FROM namegame", function(err, data) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(data);
-        }
-    })
-}
-let GetAllAccount = function(req, res) {
-    dbpool.query("SELECT * FROM account", function(err, data) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(data);
-        }
-    })
+// -------------------------RENTACCOUNT-------------------------------------
+// lấy toàn bộ thông tin tài khoản và namegame
+let getAllRentAccount = async(req, res) => {
+    let info = await apiModels.getAllRentAccount()
+    res.header("Content-Type", 'application/json');
+    res.json(info)
 }
 
-let GetAccount = function(req, res) {
-    dbpool.query("SELECT * FROM account WHERE taikhoan = ?", req.params.id, function(err, data) {
-        if (err) {
-            console.log(err);
-        } else {
-            res.send(data);
-        }
-    })
+//lấy toàn bộ tài khoản
+let getAllAccount = async(req, res) => {
+    let info = await apiModels.getAllAccount()
+    res.header("Content-Type", 'application/json');
+    res.json(info)
 }
 
-module.exports = { GetAllType, GetAllAccount, GetAccount }
+// lấy tài khoản qua id
+let getAccountId = async(req, res) => {
+    let info = await apiModels.getAccountById(req.params.id)
+    res.header("Content-Type", 'application/json');
+    res.json(info)
+}
+
+// -------------------------MENUGAMES-----------------------------------------
+// Lấy toàn bộ thông tin menugames
+let getAllMenuGames = async(req, res) => {
+    let info = await apiModels.getAllMenuGames()
+    res.header("Content-Type", 'application/json');
+    res.json(info)
+}
+
+// Lấy toàn bộ thể loại
+let getAllCategory = async(req, res) => {
+    let info = await apiModels.getAllCategory()
+    res.header("Content-Type", 'application/json');
+    res.json(info)
+}
+
+// Lấy toàn bộ ItemGames
+let getAllItemGames = async(req, res) => {
+    let info = await apiModels.getAllItemGames()
+    res.header("Content-Type", 'application/json');
+    res.json(info)
+}
+
+// Lấy thông tin ItemGames bằng Id
+let getItemGameById = async(req, res) => {
+    let info = await apiModels.getItemGameById(req.params.id)
+    res.header("Content-Type", 'application/json');
+    res.json(info)
+}
+
+module.exports = {
+    getAllRentAccount,
+    getAllAccount,
+    getAccountId,
+    getAllMenuGames,
+    getAllCategory,
+    getAllItemGames,
+    getItemGameById
+}
