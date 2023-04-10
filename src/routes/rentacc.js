@@ -3,9 +3,10 @@ var rentaccController = require('../controller/rentaccController')
 
 var router = express.Router()
 
-// trang chính
+// homepage
 router.get('/rentacc', rentaccController.getHomepage)
-    // Routes homePage
+
+// Routes RentAccount
 router.post('/rentacc/add-typegame', rentaccController.addTypeGame)
 router.post('/rentacc/edit-typegame', rentaccController.editTypeGame)
 router.post('/rentacc/del-typegame', rentaccController.delTypeGame)

@@ -48,7 +48,7 @@ let getAllItemGames = async() => {
     return { ItemGames: itemgames[0] }
 }
 
-
+// Lấy ItemGames bằng Id
 let getItemGameById = async(id) => {
     var sql = "SELECT * FROM `menugames_itemgames` WHERE id_list = ?;"
     let itemgame = await dbpool.promise().query(sql, [id])

@@ -7,7 +7,7 @@ var router = express.Router()
 const upload = multer({ dest: 'src/public/images/' });
 
 router.get("/menugames", menugamesController.getHomepage)
-router.post("/menugames/data_send_menugames_sortorder", menugamesController.SendAllDataListGames)
+router.post("/menugames/data_send_menugames_sortorder", menugamesController.saveListGame)
 router.post("/menugames/add-category", menugamesController.addCategory)
 router.post("/menugames/del-category", menugamesController.delCategory)
 router.post("/menugames/add-game", upload.single('AddGame'), menugamesController.addGame)

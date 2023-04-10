@@ -2,10 +2,11 @@ var mysql = require('mysql2')
 
 
 var conn = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "",
-    database: "servermanagernodejs"
+    host: "sql12.freemysqlhosting.net",
+    user: "sql12612005",
+    password: "KsEBcaue6I",
+    port: "3306",
+    database: "sql12612005"
 })
 
 conn.connect(function(err) {
