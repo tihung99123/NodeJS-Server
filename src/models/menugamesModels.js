@@ -1,28 +1,48 @@
 var dbpool = require("../config/connectDB")
 var fs = require('fs')
+require('dotenv').config()
+const Type = process.env.TYPE_SQL || "sqlite"
+
 
 let getAllCategory = async() => {
     var sql = "select * from `menugames_category`";
-    let category = await dbpool.promise().query(sql)
-    return category
+    if (Type == "mysql") {
+        let category = await dbpool.promise().query(sql)
+        return category
+    } else if (Type == "sqlite") {
+        let category = await dbpool.all(sql)
+        return category
+    }
 }
 
 let getAllItemGames = async() => {
     var sql = "SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;";
-    let itemgames = await dbpool.promise().query(sql)
-    return itemgames
+    if (Type == "mysql") {
+        let itemgames = await dbpool.promise().query(sql)
+        return itemgames
+    } else if (Type == "sqlite") {
+        let itemgames = await dbpool.all(sql)
+        return itemgames
+    }
 }
-
 
 module.exports = {
     getAllCategory,
     getAllItemGames,
     saveListGame: function(saved_listgame, callback = () => {}) {
-        dbpool.execute('DELETE FROM `menugames_sortorder`')
-        for (var key in saved_listgame) {
-            dbpool.execute('insert into menugames_sortorder(number, id_list, id_name) values (?, ?, ?)', [saved_listgame[key].number, saved_listgame[key].api_id, saved_listgame[key].api_id])
+        if (Type == "mysql") {
+            dbpool.execute('DELETE FROM `menugames_sortorder`')
+            for (var key in saved_listgame) {
+                dbpool.execute('insert into menugames_sortorder(number, id_list, id_name) values (?, ?, ?)', [saved_listgame[key].number, saved_listgame[key].api_id, saved_listgame[key].api_id])
+            }
+            callback("/menugames")
+        } else if (Type == "sqlite") {
+            dbpool.db.run('DELETE FROM `menugames_sortorder`')
+            for (var key in saved_listgame) {
+                dbpool.db.run('insert into menugames_sortorder(number, id_list, id_name) values (?, ?, ?)', [saved_listgame[key].number, saved_listgame[key].api_id, saved_listgame[key].api_id])
+            }
+            callback("/menugames")
         }
-        callback("/menugames")
     },
     addCategory: function(category_name, callback = () => {}) {
         dbpool.query("SELECT * FROM `menugames_category` where name = ?", category_name, function(err, insert) {
