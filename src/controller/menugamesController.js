@@ -1,12 +1,17 @@
 var dbpool = require('../config/connectDB')
 var menugamesModels = require('../models/menugamesModels')
 var fs = require("fs")
+const Type = process.env.TYPE_SQL || "sqlite"
 
 
 let getHomepage = async(req, res) => {
     let list_category = await menugamesModels.getAllCategory()
     let list_itemgames = await menugamesModels.getAllItemGames()
-    return res.render('index-menugames', { List_Category: JSON.stringify(list_category[0]), List_ItemGames: JSON.stringify(list_itemgames[0]) })
+    if (Type == "mysql") {
+        return res.render('index-menugames', { List_Category: JSON.stringify(list_category[0]), List_ItemGames: JSON.stringify(list_itemgames[0]) })
+    } else if (Type == "sqlite") {
+        return res.render('index-menugames', { List_Category: JSON.stringify(list_category), List_ItemGames: JSON.stringify(list_itemgames) })
+    }
 
 }
 

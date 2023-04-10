@@ -1,4 +1,3 @@
-const { query } = require('../config/connectDB');
 var dbpool = require('../config/connectDB')
 
 const socketio = (httpServer) => {

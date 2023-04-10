@@ -1,12 +1,21 @@
 const rentaccModels = require('../models/rentaccModels')
+require('dotenv').config()
+const Type = process.env.TYPE_SQL || "sqlite"
 
 let getHomepage = async(req, res) => {
     let namegame = await rentaccModels.getAllNameGame()
     let account = await rentaccModels.getAllAccount()
-    return res.render('index-rentacc', {
-        DataType: JSON.stringify(namegame[0]),
-        DataAccount: JSON.stringify(account[0])
-    })
+    if (Type == "mysql") {
+        return res.render('index-rentacc', {
+            DataType: JSON.stringify(namegame[0]),
+            DataAccount: JSON.stringify(account[0])
+        })
+    } else if (Type == "sqlite") {
+        return res.render('index-rentacc', {
+            DataType: JSON.stringify(namegame),
+            DataAccount: JSON.stringify(account)
+        })
+    }
 
 }
 

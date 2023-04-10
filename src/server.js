@@ -10,7 +10,7 @@ const http = require('http');
 const httpServer = http.Server(app);
 const socketio = require('./socketio/server')
 
-require('dotenv').config();
+require('dotenv').config()
 const port = process.env.PORT || 8080;
 const bodyParser = require('body-parser')
 var urlencodedParser = bodyParser.urlencoded({ extended: true })
