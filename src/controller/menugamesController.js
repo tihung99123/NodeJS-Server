@@ -36,7 +36,7 @@ let addCategory = async(req, res) => {
 let delCategory = async(req, res) => {
     let delCategory = req.body.Del_Category
     menugamesModels.delCategory(delCategory, function(result) {
-        return res.send(result)
+        return res.redirect(result)
     })
 }
 
