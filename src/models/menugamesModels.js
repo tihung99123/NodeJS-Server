@@ -104,7 +104,7 @@ module.exports = {
             dbpool.execute('DELETE FROM `menugames_category` WHERE id = ?;', [delCategory])
             callback("/menugames")
         } else if (Type == "sqlite") {
-            dbpool.db.run('DELETE FROM `menugames_category` WHERE id = ?;', [delCategory])
+            dbpool.db.run(`DELETE FROM menugames_category WHERE id = '${delCategory}'`)
             callback("/menugames")
         }
     },

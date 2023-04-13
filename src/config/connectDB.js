@@ -14,10 +14,13 @@ if (Type == "mysql") {
         database: process.env.MYSQL_DATABASE
     })
     conn.connect(function(err) {
-        if (err) console.log('Kết nối đến database không thành công!')
+        if (err) {
+            console.log('Kết nối đến database không thành công!')
+        } else {
+            console.log('Kết nối đến MYSQL thành công.');
+        }
     })
     module.exports = conn
-
 
 } else if (Type == "sqlite") {
     console.log("Connect SQLITE");
@@ -48,15 +51,15 @@ if (Type == "mysql") {
             const queries = [];
             db.each(`${sql}`, [order], (err, row) => {
                 if (err) {
-                    reject(err); // optional: you might choose to swallow errors.
+                    reject(err);
                 } else {
-                    queries.push(row); // accumulate the data
+                    queries.push(row);
                 }
             }, (err, n) => {
                 if (err) {
-                    reject(err); // optional: again, you might choose to swallow this error.
+                    reject(err);
                 } else {
-                    resolve(queries); // resolve the promise
+                    resolve(queries);
                 }
             });
             db.close()

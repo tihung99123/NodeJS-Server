@@ -83,8 +83,8 @@ module.exports = {
             dbpool.execute('DELETE FROM rentaccount_namegame WHERE typegame = ?', [typegame])
             dbpool.execute('DELETE FROM rentaccount_account WHERE typegame = ?', [typegame])
         } else if (Type == "sqlite") {
-            dbpool.db.run('DELETE FROM rentaccount_namegame WHERE typegame = ?', [typegame])
-            dbpool.db.run('DELETE FROM rentaccount_account WHERE typegame = ?', [typegame])
+            dbpool.db.run(`DELETE FROM rentaccount_namegame WHERE typegame = '${typegame}'`)
+            dbpool.db.run(`DELETE FROM rentaccount_account WHERE typegame = '${typegame}'`)
         }
 
     },
@@ -163,26 +163,52 @@ module.exports = {
 
     },
     editAccount: function(idaccount, typegamenew, taikhoannew, matkhaunew, callback = () => {}) {
-        dbpool.query('select * from rentaccount_account where id = ?', idaccount, function(err, result) {
-            if (err) {
-                callback(err);
-            } else {
-                dbpool.query(`select * from rentaccount_account where typegame = ? and account = ?`, [typegamenew, taikhoannew], function(err, edit) {
-                    if (err) {
-                        callback(err);
-                    } else {
-                        if (edit == "") {
-                            dbpool.execute('UPDATE rentaccount_account SET typegame = ?, account = ?, password = ? WHERE id = ?', [typegamenew, taikhoannew, matkhaunew, idaccount]);
-                            callback(null, `<script>window.alert("Sửa Thành công"); window.location.href = "/rentacc"; </script>`)
+        if (Type == "mysql") {
+            dbpool.query('select * from rentaccount_account where id = ?', idaccount, function(err, result) {
+                if (err) {
+                    callback(err);
+                } else {
+                    dbpool.query(`select * from rentaccount_account where typegame = ? and account = ?`, [typegamenew, taikhoannew], function(err, edit) {
+                        if (err) {
+                            callback(err);
                         } else {
-                            callback(`<script>window.alert("Sửa thất bại vì đã trùng tài khoản"); window.location.href = "/rentacc"; </script>`)
+                            if (edit == "") {
+                                dbpool.execute('UPDATE rentaccount_account SET typegame = ?, account = ?, password = ? WHERE id = ?', [typegamenew, taikhoannew, matkhaunew, idaccount]);
+                                callback(null, `<script>window.alert("Sửa Thành công"); window.location.href = "/rentacc"; </script>`)
+                            } else {
+                                callback(`<script>window.alert("Sửa thất bại vì đã trùng tài khoản"); window.location.href = "/rentacc"; </script>`)
+                            }
                         }
-                    }
-                })
-            }
-        })
+                    })
+                }
+            })
+        } else if (Type == "sqlite") {
+            dbpool.db.all('select * from rentaccount_account where id = ?', idaccount, function(err, result) {
+                if (err) {
+                    callback(err);
+                } else {
+                    dbpool.db.run(`select * from rentaccount_account where typegame = ? and account = ?`, [typegamenew, taikhoannew], function(err, edit) {
+                        if (err) {
+                            callback(err);
+                        } else {
+                            if (edit == "") {
+                                dbpool.db.run('UPDATE rentaccount_account SET typegame = ?, account = ?, password = ? WHERE id = ?', [typegamenew, taikhoannew, matkhaunew, idaccount]);
+                                callback(null, `<script>window.alert("Sửa Thành công"); window.location.href = "/rentacc"; </script>`)
+                            } else {
+                                callback(`<script>window.alert("Sửa thất bại vì đã trùng tài khoản"); window.location.href = "/rentacc"; </script>`)
+                            }
+                        }
+                    })
+                }
+            })
+        }
+
     },
     delAccount: function(typegame, taikhoan) {
-        dbpool.execute(`DELETE FROM rentaccount_account WHERE typegame = ? and account = ?`, [typegame, taikhoan])
+        if (Type == "mysql") {
+            dbpool.execute(`DELETE FROM rentaccount_account WHERE typegame = ? and account = ?`, [typegame, taikhoan])
+        } else if (Type == "sqlite") {
+            dbpool.db.run(`DELETE FROM rentaccount_account WHERE typegame = ? and account = ?`, [typegame, taikhoan])
+        }
     }
 }
