@@ -2,7 +2,7 @@ var dbpool = require("../config/connectDB")
 require('dotenv').config()
 const Type = process.env.TYPE_SQL || "sqlite"
 
-let getAllNameGame = async() => {
+let getAllNameGame = async () => {
     var sql = "SELECT * FROM `rentaccount_namegame`";
     if (Type == "mysql") {
         let namegame = await dbpool.promise().query(sql)
@@ -13,7 +13,7 @@ let getAllNameGame = async() => {
     }
 }
 
-let getAllAccount = async() => {
+let getAllAccount = async () => {
     var sql = "SELECT rentaccount_account.id,rentaccount_account.typegame,rentaccount_account.account,rentaccount_account.password,rentaccount_status.clientid,rentaccount_status.clientname FROM `rentaccount_account` LEFT JOIN `rentaccount_status` ON rentaccount_account.id = rentaccount_status.id;"
     if (Type == "mysql") {
         let account = await dbpool.promise().query(sql)
