@@ -27,9 +27,23 @@ let getAllItemGames = async() => {
     }
 }
 
+
+// Lấy toàn bộ thông tin thứ tự sắp xếp của menu
+let getSortOrderItems = async() => {
+    var sql = "SELECT * from menugames_sortorder order by number asc;";
+    if (Type == "mysql") {
+        let itemgames = await dbpool.promise().query(sql)
+        return itemgames
+    } else if (Type == "sqlite") {
+        let itemgames = await dbpool.all(sql)
+        return itemgames
+    }
+}
+
 module.exports = {
     getAllCategory,
     getAllItemGames,
+    getSortOrderItems,
     // lấy dữ liệu từ client và lưu sắp sếp thứ tự item vào dB
     saveListGame: function(saved_listgame, callback = () => {}) {
         if (Type == "mysql") {
@@ -49,22 +63,17 @@ module.exports = {
     // thêm thể loại game vào db
     addCategory: function(category_name, callback = () => {}) {
         if (Type == "mysql") {
-            dbpool.query("SELECT * FROM `menugames_category` where name = ?", category_name, function(err, insert) {
+            dbpool.query(`SELECT * FROM menugames_category where name = '${category_name}'`, function(err, insert) {
                 if (err) {
                     callback("Lỗi:", err);
                 } else {
                     if (insert == "") {
-                        dbpool.query("SELECT id FROM `menugames_category` ORDER BY id DESC LIMIT 1;", function(err, count) {
+                        dbpool.query("SELECT count(id) AS count FROM menugames_category;", function(err, count) {
                             if (err) {
                                 callback("Lỗi:", err);
                             } else {
-                                if (count[0]['count'] == 0) {
-                                    dbpool.execute('insert into menugames_category(id, name) values (?, ?)', ["1", category_name]);
-                                    callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
-                                } else {
-                                    dbpool.execute('insert into menugames_category(id, name) values (?, ?)', [count[0]['id'] + 1, category_name]);
-                                    callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
-                                }
+                                dbpool.execute('insert into menugames_category(id, name) values (?, ?)', [count[0]["count"] + 1, category_name]);
+                                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
                             }
                         })
                     } else {
@@ -78,17 +87,12 @@ module.exports = {
                     callback("Lỗi:", err);
                 } else {
                     if (insert == "") {
-                        dbpool.db.all("SELECT id FROM `menugames_category` ORDER BY id DESC LIMIT 1;", function(err, count) {
+                        dbpool.db.all("SELECT count(id) AS count FROM menugames_category;", function(err, count) {
                             if (err) {
                                 callback("Lỗi:", err);
                             } else {
-                                if (count[0]['count'] == 0) {
-                                    dbpool.db.run('insert into menugames_category(id, name) values (?, ?)', ["1", category_name]);
-                                    callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
-                                } else {
-                                    dbpool.db.run('insert into menugames_category(id, name) values (?, ?)', [count[0]['id'] + 1, category_name]);
-                                    callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
-                                }
+                                dbpool.db.run('insert into menugames_category(id, name) values (?, ?)', [count[0]["count"] + 1, category_name]);
+                                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
                             }
                         })
                     } else {
@@ -98,13 +102,35 @@ module.exports = {
             })
         }
     },
-    // xoá thể loại game
-    delCategory: function(delCategory, callback = () => {}) {
+    // chỉnh tên thể loại
+    editCategory: function(id, category_new, callback = () => {}) {
         if (Type == "mysql") {
-            dbpool.execute('DELETE FROM `menugames_category` WHERE id = ?;', [delCategory])
+            dbpool.query(`UPDATE menugames_category SET name = '${category_new}' WHERE id = ${id}`, function(err) {
+                if (err) {
+                    callback(null, `<script>window.alert("chỉnh sửa Thất Bại Vì đã trùng thể loại");</script>`)
+                } else {
+                    callback(null, `<script>window.alert("Chỉnh sửa thành công"); window.location.href = "/menugames"; </script>`)
+                }
+            })
+        } else if (Type == "sqlite") {
+            dbpool.db.get(`UPDATE menugames_category SET name = '${category_new}' WHERE id = ${id}`, function(err) {
+                if (err) {
+                    callback(null, `<script>window.alert("chỉnh sửa Thất Bại Vì đã trùng thể loại");</script>`)
+                } else {
+                    callback(null, `<script>window.alert("Chỉnh sửa thành công"); window.location.href = "/menugames"; </script>`)
+                }
+            })
+        }
+    },
+    // xoá thể loại game
+    delCategory: function(id, name, callback = () => {}) {
+        if (Type == "mysql") {
+            dbpool.execute('DELETE FROM `menugames_category` WHERE id = ?;', [id])
+            dbpool.execute('UPDATE menugames_itemgames SET category_id = NULL WHERE category_id = ? ;', [name])
             callback("/menugames")
         } else if (Type == "sqlite") {
-            dbpool.db.run(`DELETE FROM menugames_category WHERE id = '${delCategory}'`)
+            dbpool.db.run(`DELETE FROM menugames_category WHERE id = ?`, [id])
+            dbpool.db.run('UPDATE menugames_itemgames SET category_id = NULL WHERE category_id = ?', [name])
             callback("/menugames")
         }
     },

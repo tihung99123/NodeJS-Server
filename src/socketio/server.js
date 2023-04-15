@@ -1,9 +1,14 @@
 var dbpool = require('../config/connectDB')
+var rentaccModels = require('../models/rentaccModels')
+var menugamesModels = require('../models/menugamesModels')
+
 require('dotenv').config()
 const Type = process.env.TYPE_SQL
 
 const socketio = (httpServer) => {
-    const io = require('socket.io')(httpServer, { maxHttpBufferSize: 1e7 });
+    const io = require('socket.io')(httpServer, {
+        maxHttpBufferSize: 1e7
+    });
     io.on('connection', (server) => {
         console.log(server.id, 'is connected');
 
@@ -123,27 +128,26 @@ const socketio = (httpServer) => {
             console.log('Quyên góp tài khoản miễn phí', data);
         })
 
-        server.on('GETLISTMENUGAMES', (data) => {
-            dbpool.query("SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;",
-                function(err, listitemgames) {
-                    if (err) {
-                        console.log("Lỗi khi kết nối đến database (105)");
-                    } else {
-                        dbpool.query("SELECT * FROM `menugames_category`", function(err, listcategory) {
-                            if (err) {
-                                console.log("Lỗi khi kết nối đến database (105)");
-                            } else {
-                                dbpool.query("SELECT * FROM `menugames_sortorder`", function(err, sortorder) {
-                                    if (err) {
-                                        console.log("Lỗi khi kết nối đến database (105)");
-                                    } else {
-                                        server.emit("GETLISTMENUGAMES", { 'listitemgames': listitemgames, 'listcategory': listcategory, 'sortorder': sortorder })
-                                    }
-                                })
-                            }
-                        })
-                    }
+        server.on('GETLISTMENUGAMES', async(data) => {
+            if (Type == "mysql") {
+                let listitemgames = await menugamesModels.getAllItemGames()
+                let listcategory = await menugamesModels.getAllCategory()
+                let sortorder = await menugamesModels.getSortOrderItems()
+                server.emit("GETLISTMENUGAMES", {
+                    'listitemgames': listitemgames[0],
+                    'listcategory': listcategory[0],
+                    'sortorder': sortorder[0]
                 })
+            } else if (Type == "sqlite") {
+                let listitemgames = await menugamesModels.getAllItemGames()
+                let listcategory = await menugamesModels.getAllCategory()
+                let sortorder = await menugamesModels.getSortOrderItems()
+                server.emit("GETLISTMENUGAMES", {
+                    'listitemgames': listitemgames,
+                    'listcategory': listcategory,
+                    'sortorder': sortorder
+                })
+            }
         })
 
     })

@@ -368,19 +368,24 @@ function _addGame() {
     formData.append('AddGame', JSON.stringify(Linklist_target));
     formData.append('AddGame', JSON.stringify(Linklist_link));
     formData.append('AddGame', JSON.stringify(LinkReg_List));
+    if (category_id != "Bấm vào để chọn thể loại") {
+        fetch('/menugames/add-game', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                window.alert(result);
+                window.location.href = "/menugames";
+            })
+            .catch(error => {
+                window.alert("Lỗi khi thêm vui lòng nhập lại hoặc khởi động lại trang.");
+            });
 
-    fetch('/menugames/add-game', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.text())
-        .then(result => {
-            window.alert(result);
-            window.location.href = "/menugames";
-        })
-        .catch(error => {
-            window.alert("Lỗi khi thêm vui lòng nhập lại hoặc khởi động lại trang.");
-        });
+    } else {
+
+        window.alert("Chưa chọn thể loại");
+    }
 
 
 }
@@ -399,6 +404,9 @@ function _delGame() {
     });
 }
 
-function del_Category(category_in) {
-    document.getElementById("del-category").setAttribute("value", category_in)
+
+function edit_Category(getid) {
+    document.getElementById("get-category").setAttribute("value", getid)
+    document.getElementById("getDel-category_id").setAttribute("value", getid)
+    document.getElementById("getDel-category_name").setAttribute("value", getid)
 }

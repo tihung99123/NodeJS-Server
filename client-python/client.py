@@ -9,7 +9,7 @@ typegame = "Steam"
 
 try:
     client = socketio.Client()
-    client.connect('http://localhost:3000')
+    client.connect('https://da00-113-23-109-161.ngrok-free.app/')
     print('Đã kết nổi đến máy chủ')
 except:
     messagebox.showinfo("Thông báo", "Kết nối máy chủ thất bại vui lòng vào lại")

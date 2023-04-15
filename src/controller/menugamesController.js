@@ -1,10 +1,13 @@
-var dbpool = require('../config/connectDB')
 var menugamesModels = require('../models/menugamesModels')
-var fs = require("fs")
+
+const { PythonShell } = require('python-shell');
+
 const Type = process.env.TYPE_SQL || "sqlite"
 
 
 let getHomepage = async(req, res) => {
+
+
     let list_category = await menugamesModels.getAllCategory()
     let list_itemgames = await menugamesModels.getAllItemGames()
     if (Type == "mysql") {
@@ -33,14 +36,37 @@ let addCategory = async(req, res) => {
     })
 }
 
+let editCategory = async(req, res) => {
+    let { id, category_new } = req.body;
+    menugamesModels.editCategory(id, category_new, function(err, result) {
+        if (err) {
+            return res.send("Lỗi")
+        } else {
+            return res.redirect(result)
+        }
+    })
+}
+
 let delCategory = async(req, res) => {
-    let delCategory = req.body.Del_Category
-    menugamesModels.delCategory(delCategory, function(result) {
+    let { id, name } = req.body
+    menugamesModels.delCategory(id, name, function(result) {
         return res.redirect(result)
     })
 }
 
 let addGame = async(req, res) => {
+    let options = {
+        mode: 'text',
+        pythonOptions: ['-u'],
+        scriptPath: 'py_services/',
+        args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
+    };
+
+    PythonShell.run('imageprocess.py', options, function(err, result) {
+        if (err) throw err;
+        console.log('result: ', result.toString());
+    });
+
     let addaccount = req.body.AddGame
     let icongame = req.file
     menugamesModels.addGame(addaccount, icongame, function(err, result) {
@@ -66,4 +92,4 @@ let delGame = async(req, res) => {
         return res.send(result)
     })
 }
-module.exports = { getHomepage, saveListGame, addCategory, delCategory, addGame, editGame, delGame }
+module.exports = { getHomepage, saveListGame, addCategory, editCategory, delCategory, addGame, editGame, delGame }

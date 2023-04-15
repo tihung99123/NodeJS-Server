@@ -43,8 +43,8 @@
                                             <%= List_Category[key]["name"] %>
                                         </td>
                                         <td style="text-align: right;">
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory">Chỉnh sửa</button>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="del_Category(`<%= List_Category[key]['id'] %>`)">Xoá</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Chỉnh sửa</button>
+                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Xoá</button>
                                         </td>
                                     </tr>
                                     <% } %>
@@ -58,6 +58,7 @@
     <!-- Menugame -->
     <div class="container">
         <div style="text-align: right;">
+            <label for="">-----------------------------Đã Setting--------------------------                   </label>
             <button type="button" class="btn btn-primary" id="edit-set-game" data-toggle="modal" data-target="#ModalEditGame" disabled>Chỉnh Game</button>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddGame">Thêm Game</button>
             <button type="button" class="btn btn-primary" onclick="window.location.href = '/menugames';">RESET</button>
@@ -66,23 +67,54 @@
         <div id="basic-grid" class="row text-center">
             <% var List_ItemGames = JSON.parse(List_ItemGames) %>
                 <% for (var key in List_ItemGames) { %>
+                    <% if (List_ItemGames[key]['category_id'] != undefined ) { %>
+                        <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" api_id="<%= List_ItemGames[key]['id_list'] %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
+                            `<%= List_ItemGames[key]['name_game'] %>`,
+                            `<%= List_ItemGames[key]['icon'] %>`,
+                            `<%= List_ItemGames[key]['category_id'] %>`,
+                            `<%= List_ItemGames[key]['name_game'] %>`,
+                            `<%= List_ItemGames[key]['folder'] %>`,
+                            `<%= List_ItemGames[key]['exe'] %>`,
+                            `<%= List_ItemGames[key]['parameter'] %>`,
+                            `<%= List_ItemGames[key]['linkfolder_target'] %>`,
+                            `<%= List_ItemGames[key]['linkfolder_link'] %>`,
+                            `<%= List_ItemGames[key]['reg_id'] %>`)">
+                            <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
+                            <div class="text-items">
+                                <%= List_ItemGames[key]['name_game'] %>
+                            </div>
+                        </div>
+                        <% } %>
+                            <% } %>
+        </div>
+    </div>
+
+    <!-- Menugame -->
+    <div class="container">
+        <div style="text-align: center;">
+            <label for="">-------------------Chưa có thể loại-------------------</label>
+        </div>
+        <div id="basic-grid" class="row text-center">
+            <% for (var key in List_ItemGames) { %>
+                <% if (List_ItemGames[key]['category_id'] == undefined ) { %>
                     <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" api_id="<%= List_ItemGames[key]['id_list'] %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
-                    `<%= List_ItemGames[key]['name_game'] %>`,
-                    `<%= List_ItemGames[key]['icon'] %>`,
-                    `<%= List_ItemGames[key]['category_id'] %>`,
-                    `<%= List_ItemGames[key]['name_game'] %>`,
-                    `<%= List_ItemGames[key]['folder'] %>`,
-                    `<%= List_ItemGames[key]['exe'] %>`,
-                    `<%= List_ItemGames[key]['parameter'] %>`,
-                    `<%= List_ItemGames[key]['linkfolder_target'] %>`,
-                    `<%= List_ItemGames[key]['linkfolder_link'] %>`,
-                    `<%= List_ItemGames[key]['reg_id'] %>`)">
+                            `<%= List_ItemGames[key]['name_game'] %>`,
+                            `<%= List_ItemGames[key]['icon'] %>`,
+                            `<%= List_ItemGames[key]['category_id'] %>`,
+                            `<%= List_ItemGames[key]['name_game'] %>`,
+                            `<%= List_ItemGames[key]['folder'] %>`,
+                            `<%= List_ItemGames[key]['exe'] %>`,
+                            `<%= List_ItemGames[key]['parameter'] %>`,
+                            `<%= List_ItemGames[key]['linkfolder_target'] %>`,
+                            `<%= List_ItemGames[key]['linkfolder_link'] %>`,
+                            `<%= List_ItemGames[key]['reg_id'] %>`)">
                         <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
                         <div class="text-items">
                             <%= List_ItemGames[key]['name_game'] %>
                         </div>
                     </div>
                     <% } %>
+                        <% } %>
         </div>
     </div>
 
@@ -127,12 +159,13 @@
                 </div>
                 <div class="modal-body">
                     <!-- Input -->
-                    <form action="/rentacc/add-typegame" method="POST">
+                    <form action="/menugames/edit-category" method="POST">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text">Sửa thể loại</span>
                             </div>
-                            <input type="text" class="form-control" placeholder="Nhập vào đây" name="typegame">
+                            <input hidden id="get-category" name="id">
+                            <input type="text" class="form-control" placeholder="Nhập vào đây" name="category_new">
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
@@ -158,7 +191,8 @@
                 </div>
                 <div class="modal-footer">
                     <form action="/menugames/del-category" method="POST">
-                        <input hidden id="del-category" name="Del_Category">
+                        <input hidden id="getDel-category_id" name="id">
+                        <input hidden id="getDel-category_name" name="name">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
                         <button type="submit" class="btn btn-primary">Chấp nhận</button>
                     </form>
