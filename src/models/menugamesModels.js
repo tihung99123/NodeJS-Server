@@ -152,7 +152,7 @@ module.exports = {
                 }
             })
         } else if (Type == "sqlite") {
-            dbpool.db.run("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `exe`, `parameter`, `linkfolder_target`, `linkfolder_link`, `reg_id`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2], addaccount[3], addaccount[4], addaccount[5], addaccount[6], addaccount[7]], function(err, addGame) {
+            dbpool.db.run("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `exe`, `parameter`, `linkfolder_target`, `linkfolder_link`, `reg_id`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2].replace(/\\/g, "/"), addaccount[3].replace(/\\/g, "/"), addaccount[4], addaccount[5].replace(/\\/g, "/"), addaccount[6].replace(/\\/g, "/"), addaccount[7].replace(/\\/g, "/")], function(err, addGame) {
                 if (err) {
                     callback(err);
                 } else {

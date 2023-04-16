@@ -10,10 +10,12 @@ datas = img.getdata()
 
 new_data = []
 for item in datas:
-    if item[0] >= 225 and item[1] >= 225 and item[2] >= 225:
+    if item[0] >= 245 and item[1] >= 245 and item[2] >= 245:
         new_data.append((255, 255, 255, 0))
     else:        
         new_data.append(item)
 
 img.putdata(new_data)
+
+img.thumbnail((360,360))
 img.save(sys.argv[2],"PNG")

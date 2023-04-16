@@ -61,7 +61,6 @@ let addGame = async(req, res) => {
         scriptPath: 'py_services/',
         args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
     };
-
     PythonShell.run('imageprocess.py', options, function(err, result) {
         if (err) throw err;
         console.log('result: ', result.toString());
@@ -79,6 +78,18 @@ let addGame = async(req, res) => {
 }
 
 let editGame = async(req, res) => {
+    if (req.file != undefined) {
+        let options = {
+            mode: 'text',
+            pythonOptions: ['-u'],
+            scriptPath: 'py_services/',
+            args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
+        };
+        PythonShell.run('imageprocess.py', options, function(err, result) {
+            if (err) throw err;
+            console.log('result: ', result.toString());
+        });
+    }
     let addaccount = req.body.EditGame
     let icongame = req.file
     menugamesModels.editGame(addaccount, icongame, function(result) {

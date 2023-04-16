@@ -69,6 +69,7 @@ function dragNdrop_edit(event) {
     previewImg.setAttribute("src", fileName);
     preview.innerHTML = "";
     preview.appendChild(previewImg);
+
 }
 
 function drag() {
@@ -409,4 +410,13 @@ function edit_Category(getid) {
     document.getElementById("get-category").setAttribute("value", getid)
     document.getElementById("getDel-category_id").setAttribute("value", getid)
     document.getElementById("getDel-category_name").setAttribute("value", getid)
+}
+
+function getImageFromURL() {
+    const input = prompt("Nhập URL", "https://play-lh.googleusercontent.com/CrHJi6586GgYkSRAtCYu10Pq5Bq6OrpHSjhj36At-9oGGIaCRLTbPsgkVpACFwrZHw")
+    var preview = document.getElementById("preview");
+    var previewImg = document.createElement("img");
+    previewImg.setAttribute("src", input);
+    preview.innerHTML = "";
+    preview.appendChild(previewImg);
 }

@@ -215,14 +215,17 @@
 
                     <body>
                         <label>Biểu tượng game:</label>
-                        <div style="width: 100%;display: block;height: 4cm;">
+                        <div style="width: 100%;display: block;height: 5cm;">
                             <div class="uploadOuter dropzone" id="dropzone-imageicongame" style="display: inline-block;">
                                 <span class="dragBox">
                                     Nhấp hoặc kéo thả vào đây!
-                                    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddGame"  />
+                                    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddGame"/>
                                 </span>
                             </div>
                             <div id="preview" style="display: inline-block;width: 35%;"></div>
+                            <div>Lấy ảnh từ URL:
+                                <button onclick="getImageFromURL()">Nhấn vào</button>
+                            </div>
                         </div>
                         <div>
                             <table>
