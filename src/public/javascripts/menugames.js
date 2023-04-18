@@ -80,7 +80,7 @@ function drop() {
     document.getElementById('uploadFile').parentNode.className = 'dragBox';
 }
 
-function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, parameter, linkfolder_target, linkfolder_link, reg_id) {
+function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, parameter, linkfolder_target, linkfolder_link, reg_id, batchcmd) {
 
 
     var edit_set_game = document.getElementById('edit-set-game')
@@ -139,6 +139,9 @@ function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, 
     for (var key in reg_id) {
         _addinputedit("reg", reg_id[key]['File'])
     }
+
+    var batchcmd_old = document.getElementById('edit_batchcmd')
+    batchcmd_old.textContent = decodeURIComponent(batchcmd)
 }
 
 function _editGame() {
@@ -194,6 +197,9 @@ function _editGame() {
         }
     });
 
+
+    var batchcmd_new = encodeURIComponent(document.getElementById("edit_batchcmd").value);
+
     const fileInput = document.getElementById('EditGame');
     const file = fileInput.files[0];
     const formData = new FormData();
@@ -231,6 +237,7 @@ function _editGame() {
     formData.append('EditGame', JSON.stringify(Linklist_target));
     formData.append('EditGame', JSON.stringify(Linklist_link));
     formData.append('EditGame', JSON.stringify(LinkReg_List));
+    formData.append('EditGame', batchcmd_new);
 
 
     fetch('/menugames/edit-game', {
@@ -357,6 +364,9 @@ function _addGame() {
         }
     });
 
+
+    var batchcmd = encodeURIComponent(document.getElementById("add_batchcmd").value);
+
     const fileInput = document.getElementById('AddGame');
     const file = fileInput.files[0];
     const formData = new FormData();
@@ -369,6 +379,7 @@ function _addGame() {
     formData.append('AddGame', JSON.stringify(Linklist_target));
     formData.append('AddGame', JSON.stringify(Linklist_link));
     formData.append('AddGame', JSON.stringify(LinkReg_List));
+    formData.append('AddGame', batchcmd);
     if (category_id != "Bấm vào để chọn thể loại") {
         fetch('/menugames/add-game', {
                 method: 'POST',

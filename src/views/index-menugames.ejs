@@ -78,7 +78,8 @@
                             `<%= List_ItemGames[key]['parameter'] %>`,
                             `<%= List_ItemGames[key]['linkfolder_target'] %>`,
                             `<%= List_ItemGames[key]['linkfolder_link'] %>`,
-                            `<%= List_ItemGames[key]['reg_id'] %>`)">
+                            `<%= List_ItemGames[key]['reg_id'] %>`,
+                            `<%= List_ItemGames[key]['encode_batchcmd'] %>`)">
                             <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
                             <div class="text-items">
                                 <%= List_ItemGames[key]['name_game'] %>
@@ -107,10 +108,11 @@
                             `<%= List_ItemGames[key]['parameter'] %>`,
                             `<%= List_ItemGames[key]['linkfolder_target'] %>`,
                             `<%= List_ItemGames[key]['linkfolder_link'] %>`,
-                            `<%= List_ItemGames[key]['reg_id'] %>`)">
+                            `<%= List_ItemGames[key]['reg_id'] %>`,
+                            `<%= List_ItemGames[key]['encode_batchcmd'] %>`)">
                         <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
                         <div class="text-items">
-                            <%= List_ItemGames[key]['name_game'] %>
+                            <%= List_ItemGames[key]['name_game'] %>W
                         </div>
                     </div>
                     <% } %>
@@ -279,6 +281,14 @@
                                         <button onclick="_addinput('reg')">Thêm</button>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td>Batch/CMD:</td>
+                                    <td>
+                                        <div style="display: block;">
+                                            <textarea id="add_batchcmd" cols="30" rows="10" style="height: 3cm; width: 100%;"></textarea>
+                                        </div>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </body>
@@ -389,6 +399,14 @@
                                             </div>
                                         </div>
                                         <button onclick="_addinputedit('reg','idgame')">Thêm</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Batch/CMD:</td>
+                                    <td>
+                                        <div style="display: block;">
+                                            <textarea id="edit_batchcmd" cols="30" rows="10" style="height: 3cm; width: 100%;"></textarea>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>

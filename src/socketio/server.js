@@ -149,6 +149,11 @@ const socketio = (httpServer) => {
                 })
             }
         })
+        server.on('get_dataMGDone', async(data) => {
+            if (data == "done_Load") {
+                server.emit("DISCONNECT_Menu")
+            }
+        })
 
     })
 }
