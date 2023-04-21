@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
+
 <head>
     <meta charset="UTF-8">
     <title>Quản lí MenuGames</title>
@@ -55,7 +57,7 @@
         </div>
     </div>
 
-    <!-- Menugame -->
+    <!-- Menugame Đã Setting -->
     <div class="container">
         <div style="text-align: right;">
             <label for="">-----------------------------Đã Setting--------------------------                   </label>
@@ -66,31 +68,33 @@
         </div>
         <div id="basic-grid" class="row text-center">
             <% var List_ItemGames = JSON.parse(List_ItemGames) %>
-                <% for (var key in List_ItemGames) { %>
-                    <% if (List_ItemGames[key]['category_id'] != undefined ) { %>
-                        <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" api_id="<%= List_ItemGames[key]['id_list'] %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
+                <% var IdandName = []%>
+                    <% for (var key in List_ItemGames) { %>
+                        <% IdandName.push({ id_list:List_ItemGames[key]['id_list'], name_game:List_ItemGames[key]['name_game'] })%>
+                            <% } %>
+                                <% for (var key in List_ItemGames) { %>
+                                    <% if (List_ItemGames[key]['category_id'] != undefined ) { %>
+                                        <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" api_id="<%= List_ItemGames[key]['id_list'] %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
                             `<%= List_ItemGames[key]['name_game'] %>`,
                             `<%= List_ItemGames[key]['icon'] %>`,
                             `<%= List_ItemGames[key]['category_id'] %>`,
                             `<%= List_ItemGames[key]['name_game'] %>`,
                             `<%= List_ItemGames[key]['folder'] %>`,
-                            `<%= List_ItemGames[key]['exe'] %>`,
                             `<%= List_ItemGames[key]['parameter'] %>`,
-                            `<%= List_ItemGames[key]['linkfolder_target'] %>`,
-                            `<%= List_ItemGames[key]['linkfolder_link'] %>`,
-                            `<%= List_ItemGames[key]['reg_id'] %>`,
-                            `<%= List_ItemGames[key]['encode_batchcmd'] %>`)">
-                            <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
-                            <div class="text-items">
-                                <%= List_ItemGames[key]['name_game'] %>
-                            </div>
-                        </div>
-                        <% } %>
-                            <% } %>
+                            `<%= List_ItemGames[key]['child_id_list'] %>`,
+                            `<%= JSON.stringify(IdandName) %>` )">
+                                            <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
+                                            <div class="text-items">
+                                                <%= List_ItemGames[key]['name_game'] %>
+                                            </div>
+                                        </div>
+                                        <% } %>
+                                            <% } %>
         </div>
     </div>
 
-    <!-- Menugame -->
+
+    <!-- Menugame Chưa có thể loại -->
     <div class="container">
         <div style="text-align: center;">
             <label for="">-------------------Chưa có thể loại-------------------</label>
@@ -104,15 +108,12 @@
                             `<%= List_ItemGames[key]['category_id'] %>`,
                             `<%= List_ItemGames[key]['name_game'] %>`,
                             `<%= List_ItemGames[key]['folder'] %>`,
-                            `<%= List_ItemGames[key]['exe'] %>`,
                             `<%= List_ItemGames[key]['parameter'] %>`,
-                            `<%= List_ItemGames[key]['linkfolder_target'] %>`,
-                            `<%= List_ItemGames[key]['linkfolder_link'] %>`,
-                            `<%= List_ItemGames[key]['reg_id'] %>`,
-                            `<%= List_ItemGames[key]['encode_batchcmd'] %>`)">
+                            `<%= List_ItemGames[key]['child_id_list'] %>`,
+                            `<%= JSON.stringify(IdandName) %>` )">
                         <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
                         <div class="text-items">
-                            <%= List_ItemGames[key]['name_game'] %>W
+                            <%= List_ItemGames[key]['name_game'] %>
                         </div>
                     </div>
                     <% } %>
@@ -249,45 +250,23 @@
                                     <td><input type="text" placeholder="Nhập đường dẫn" id="folder"></td>
                                 </tr>
                                 <tr>
-                                    <td>File.EXE:</td>
-                                    <td><input type="text" placeholder="Nhập file.exe" id="exe"></td>
-                                </tr>
-                                <tr>
                                     <td>Hậu tố:</td>
                                     <td><input type="text" placeholder="Nhập hậu tố" id="parameter"></td>
                                 </tr>
                                 <tr>
-                                    <td>Link Folder:</td>
+                                    <td>Child-Items:</td>
                                     <td>
                                         <div style="display: block;">
-                                            <div id="addinputtargetlink" style="width: 40%;display: inline-block">
-                                                <input type="text" id="target0" placeholder="Target" style="width: 100%;">
-                                            </div>
-                                            <div id="addinputlinklink" style="width: 40%; display: inline-block;">
-                                                <input type="text" id="link0" placeholder="Link" style="width: 100%;">
-                                            </div>
-                                        </div>
-                                        <button onclick="_addinput('link')">Thêm</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>File Reg:</td>
-                                    <td>
-                                        <div style="display: block;">
-                                            <div id="addinputregreg" style="width: 40%;display: inline-block">
-                                                <input type="text" id="reg0" placeholder="Reg" style="width: 100%;">
+                                            <div id="add_child" style="width: 40%;display: inline-block">
+                                                <select id="childitem0" class="form-select" aria-label="Default select example">
+                                                    <option selected>Chọn Child - Items Games 0</option>
+                                                    <% for (var key in List_ItemGames) { %>
+                                                    <option value="<%= List_ItemGames[key]['id_list'] %>"><%= List_ItemGames[key]["name_game"] %></option>
+                                                    <% } %>
+                                                </select>
                                             </div>
                                         </div>
-                                        <button onclick="_addinput('reg')">Thêm</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Batch/CMD:</td>
-                                    <td>
-                                        <div style="display: block;">
-                                            <textarea id="add_batchcmd" cols="30" rows="10" style="height: 3cm; width: 100%;"></textarea>
-                                        </div>
-                                    </td>
+                                        <button onclick="_addchilds('<%= JSON.stringify(IdandName) %>','add')">Thêm</button></td>
                                 </tr>
                             </table>
                         </div>
@@ -372,42 +351,17 @@
                                     <td><input type="text" placeholder="Nhập đường dẫn" id="folder-edit"></td>
                                 </tr>
                                 <tr>
-                                    <td>File.EXE:</td>
-                                    <td><input type="text" placeholder="Nhập file.exe" id="exe-edit"></td>
-                                </tr>
-                                <tr>
                                     <td>Hậu tố:</td>
                                     <td><input type="text" placeholder="Nhập hậu tố" id="parameter-edit"></td>
                                 </tr>
                                 <tr>
-                                    <td>Link Folder:</td>
+                                    <td>Child-Items:</td>
                                     <td>
                                         <div style="display: block;">
-                                            <div id="addinputtargetlink-edit" style="width: 40%;display: inline-block">
-                                            </div>
-                                            <div id="addinputlinklink-edit" style="width: 40%; display: inline-block;">
+                                            <div id="edit_child" style="width: 40%;display: inline-block">
                                             </div>
                                         </div>
-                                        <button onclick="_addinputedit('link','idgame')">Thêm</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>File Reg:</td>
-                                    <td>
-                                        <div style="display: block;">
-                                            <div id="addinputregreg-edit" style="width: 40%;display: inline-block">
-                                            </div>
-                                        </div>
-                                        <button onclick="_addinputedit('reg','idgame')">Thêm</button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Batch/CMD:</td>
-                                    <td>
-                                        <div style="display: block;">
-                                            <textarea id="edit_batchcmd" cols="30" rows="10" style="height: 3cm; width: 100%;"></textarea>
-                                        </div>
-                                    </td>
+                                        <button onclick="_addchilds('<%= JSON.stringify(IdandName) %>','edit')">Thêm</button></td>
                                 </tr>
                             </table>
                         </div>

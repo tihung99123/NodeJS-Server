@@ -80,7 +80,7 @@ function drop() {
     document.getElementById('uploadFile').parentNode.className = 'dragBox';
 }
 
-function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, parameter, linkfolder_target, linkfolder_link, reg_id, batchcmd) {
+function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, parameter, child_item, data_child) {
 
 
     var edit_set_game = document.getElementById('edit-set-game')
@@ -109,39 +109,21 @@ function Edit_SetGame(id_list, name, icon, category_id, name_game, folder, exe, 
     var folders = document.getElementById('folder-edit')
     folders.setAttribute("placeholder", folder)
 
-    var exes = document.getElementById('exe-edit')
-    exes.setAttribute("placeholder", exe)
-
     var parameters = document.getElementById('parameter-edit')
     parameters.setAttribute("placeholder", parameter)
 
-    linkfolder_target = JSON.parse(linkfolder_target)
-    var addinputtargetlink_edit = document.getElementById("addinputtargetlink-edit")
-    while (addinputtargetlink_edit.firstChild) {
-        addinputtargetlink_edit.removeChild(addinputtargetlink_edit.lastChild)
+
+
+    var childitems_edit = document.getElementById("edit_child")
+    while (childitems_edit.firstChild) {
+        childitems_edit.removeChild(childitems_edit.lastChild)
     }
 
-    linkfolder_link = JSON.parse(linkfolder_link)
-    var addinputlinklink_edit = document.getElementById("addinputlinklink-edit")
-    while (addinputlinklink_edit.firstChild) {
-        addinputlinklink_edit.removeChild(addinputlinklink_edit.lastChild)
+    child_item = JSON.parse(child_item)
+    for (var key in child_item) {
+        _addinputedit("child", child_item[key], data_child)
     }
 
-    reg_id = JSON.parse(reg_id)
-    var addinputregreg_edit = document.getElementById("addinputregreg-edit")
-    while (addinputregreg_edit.firstChild) {
-        addinputregreg_edit.removeChild(addinputregreg_edit.lastChild)
-    }
-
-    for (var key in linkfolder_target) {
-        _addinputedit("link", linkfolder_target[key]['Target'], linkfolder_link[key]['Link'])
-    }
-    for (var key in reg_id) {
-        _addinputedit("reg", reg_id[key]['File'])
-    }
-
-    var batchcmd_old = document.getElementById('edit_batchcmd')
-    batchcmd_old.textContent = decodeURIComponent(batchcmd)
 }
 
 function _editGame() {
@@ -150,55 +132,19 @@ function _editGame() {
     var name_game = document.getElementById("name_game-edit");
     var icon_old = document.getElementById("icon-old-edit");
     var folder = document.getElementById("folder-edit");
-    var exe = document.getElementById("exe-edit");
     var parameter = document.getElementById("parameter-edit");
 
-    var listTarget_Link = document.querySelector("#addinputtargetlink-edit").children;
-    var listTarget_Array = Array.from(listTarget_Link);
-    var Linklist_target = []
-    listTarget_Array.forEach((item) => {
-        if (item.id.includes("target-edit-")) {
-            var targetA = document.getElementById(item.id).value
-            var targetB = document.getElementById(item.id).placeholder
-            if (targetA.length > 0) {
-                Linklist_target.push({ Tag_Target: item.id, Target: targetA })
-            } else {
-                Linklist_target.push({ Tag_Target: item.id, File: targetB })
-            }
+
+    var List_Child = document.querySelector("#edit_child").children;
+    var listChild_Array = Array.from(List_Child);
+    var ListChild_link = []
+    listChild_Array.forEach((item) => {
+        if (item.id.includes("edit_childitem")) {
+            var Item_child_id_list = document.getElementById(item.id).value
+            var Item_child_name_game = document.getElementById(item.id).options[document.getElementById(item.id).selectedIndex].text
+            ListChild_link.push({ id_list: Item_child_id_list, name_game: Item_child_name_game })
         }
     });
-    var listLink_Link = document.querySelector("#addinputlinklink-edit").children;
-    var listLink_Array = Array.from(listLink_Link);
-    var Linklist_link = []
-    listLink_Array.forEach((item) => {
-        if (item.id.includes("link-edit-")) {
-            var linkA = document.getElementById(item.id).value
-            var linkB = document.getElementById(item.id).placeholder
-            if (linkA.length > 0) {
-                Linklist_link.push({ Tag_Link: item.id, Link: linkA })
-            } else {
-                Linklist_link.push({ Tag_Link: item.id, Link: linkB })
-            }
-        }
-    });
-
-    var listReg = document.querySelector("#addinputregreg-edit").children;
-    var listReg_Array = Array.from(listReg);
-    var LinkReg_List = []
-    listReg_Array.forEach((item) => {
-        if (item.id.includes("reg-edit-")) {
-            var REG_FileA = document.getElementById(item.id).value
-            var REG_FileB = document.getElementById(item.id).placeholder
-            if (REG_FileA.length > 0) {
-                LinkReg_List.push({ Tag_Reg: item.id, File: REG_FileA })
-            } else {
-                LinkReg_List.push({ Tag_Reg: item.id, File: REG_FileB })
-            }
-        }
-    });
-
-
-    var batchcmd_new = encodeURIComponent(document.getElementById("edit_batchcmd").value);
 
     const fileInput = document.getElementById('EditGame');
     const file = fileInput.files[0];
@@ -222,22 +168,12 @@ function _editGame() {
         formData.append('EditGame', folder.placeholder);
     }
 
-    if (exe.value.length > 0) {
-        formData.append('EditGame', exe.value);
-    } else {
-        formData.append('EditGame', exe.placeholder);
-    }
-
     if (parameter.value.length > 0) {
         formData.append('EditGame', parameter.value);
     } else {
         formData.append('EditGame', parameter.placeholder);
     }
-
-    formData.append('EditGame', JSON.stringify(Linklist_target));
-    formData.append('EditGame', JSON.stringify(Linklist_link));
-    formData.append('EditGame', JSON.stringify(LinkReg_List));
-    formData.append('EditGame', batchcmd_new);
+    formData.append('EditGame', JSON.stringify(ListChild_link));
 
 
     fetch('/menugames/edit-game', {
@@ -293,79 +229,50 @@ function _addinputedit(option, data1, data2) {
         createinput1.setAttribute("id", `reg-edit-${count_Reg}`)
         createinput1.setAttribute("placeholder", data1)
         addinput.appendChild(createinput1)
+    } else if (option == "child") {
+        var listChild = document.querySelector("#edit_child").children;
+        var listChildA = Array.from(listChild);
+        var count_Child = listChildA.length
+        var addselect_child = document.getElementById("edit_child");
+        var createselect = document.createElement("select")
+        createselect.setAttribute("id", `edit_childitem${count_Child}`)
+        createselect.setAttribute("class", "form-select")
+        createselect.setAttribute("aria-label", `Default select example`)
+        var createoption = document.createElement("option")
+        createoption.setAttribute("selected", "")
+        createoption.setAttribute("value", data1["id_list"])
+        createoption.textContent = data1["name_game"]
+        createselect.appendChild(createoption)
+        List_ItemGames = JSON.parse(data2)
+        for (var key in List_ItemGames) {
+            var createoption_list = document.createElement("option")
+            createoption_list.setAttribute("value", List_ItemGames[key]['id_list'])
+            createoption_list.textContent = List_ItemGames[key]['name_game']
+            createselect.appendChild(createoption_list)
+        }
+        addselect_child.appendChild(createselect)
     }
 }
 
-function _addinput(option) {
-    if (option == "link") {
-        var listLinkFolder = document.querySelector("#addinputlink" + option).children;
-        var listArray_Link = Array.from(listLinkFolder);
-        var count_Link = listArray_Link.length
-        var addinputtarget = document.getElementById("addinputtarget" + option);
-        var addinputlink = document.getElementById("addinputlink" + option);
-        var createinput1 = document.createElement("input")
-        createinput1.setAttribute("type", "text")
-        createinput1.setAttribute("id", `target${count_Link}`)
-        createinput1.setAttribute("placeholder", `Target-${count_Link}`)
-        createinput1.setAttribute("style", "width: 100%")
-        var createinput2 = document.createElement("input");
-        createinput2.setAttribute("type", "text")
-        createinput2.setAttribute("id", `link${count_Link}`)
-        createinput2.setAttribute("placeholder", `Link-${count_Link}`)
-        createinput2.setAttribute("style", "width: 100%")
-        addinputtarget.appendChild(createinput1)
-        addinputlink.appendChild(createinput2)
-    } else if (option == "reg") {
-        var listRegFolder = document.querySelector("#addinputreg" + option).children;
-        var listArray_Reg = Array.from(listRegFolder);
-        var count_Reg = listArray_Reg.length
-        var addinput = document.getElementById("addinputreg" + option);
-        var createinput1 = document.createElement("input")
-        createinput1.setAttribute("type", "text")
-        createinput1.setAttribute("id", `reg${count_Reg}`)
-        createinput1.setAttribute("placeholder", `Reg-${count_Reg}`)
-        addinput.appendChild(createinput1)
-    }
-}
 
 function _addGame() {
     var category_id = document.getElementById("category_id").value
     var name_game = document.getElementById("name_game").value;
     var folder = document.getElementById("folder").value;
-    var exe = document.getElementById("exe").value;
     var parameter = document.getElementById("parameter").value;
 
-    var listTarget_Link = document.querySelector("#addinputtargetlink").children;
-    var listTarget_Array = Array.from(listTarget_Link);
-    var Linklist_target = []
-    listTarget_Array.forEach((item) => {
-        if (item.id.includes("target")) {
-            var target = document.getElementById(item.id).value
-            Linklist_target.push({ Tag_Target: item.id, Target: target })
-        }
-    });
-    var listLink_Link = document.querySelector("#addinputlinklink").children;
-    var listLink_Array = Array.from(listLink_Link);
-    var Linklist_link = []
-    listLink_Array.forEach((item) => {
-        if (item.id.includes("link")) {
-            var link = document.getElementById(item.id).value
-            Linklist_link.push({ Tag_Link: item.id, Link: link })
+
+    var child_Item_Games = document.querySelector("#add_child").children;
+    var listChildItems_Array = Array.from(child_Item_Games);
+    var listChildItems_List = []
+    listChildItems_Array.forEach((item) => {
+        if (item.id.includes("childitem")) {
+            var Item_child_id_list = document.getElementById(item.id).value
+            var Item_child_name_game = document.getElementById(item.id).options[document.getElementById(item.id).selectedIndex].text
+            listChildItems_List.push({ id_list: Item_child_id_list, name_game: Item_child_name_game })
         }
     });
 
-    var listReg = document.querySelector("#addinputregreg").children;
-    var listReg_Array = Array.from(listReg);
-    var LinkReg_List = []
-    listReg_Array.forEach((item) => {
-        if (item.id.includes("reg")) {
-            var REG_File = document.getElementById(item.id).value
-            LinkReg_List.push({ Tag_Reg: item.id, File: REG_File })
-        }
-    });
-
-
-    var batchcmd = encodeURIComponent(document.getElementById("add_batchcmd").value);
 
     const fileInput = document.getElementById('AddGame');
     const file = fileInput.files[0];
@@ -374,12 +281,10 @@ function _addGame() {
     formData.append('AddGame', category_id);
     formData.append('AddGame', name_game);
     formData.append('AddGame', folder);
-    formData.append('AddGame', exe);
     formData.append('AddGame', parameter);
-    formData.append('AddGame', JSON.stringify(Linklist_target));
-    formData.append('AddGame', JSON.stringify(Linklist_link));
-    formData.append('AddGame', JSON.stringify(LinkReg_List));
-    formData.append('AddGame', batchcmd);
+    formData.append('AddGame', JSON.stringify(listChildItems_List));
+
+
     if (category_id != "Bấm vào để chọn thể loại") {
         fetch('/menugames/add-game', {
                 method: 'POST',
@@ -416,14 +321,61 @@ function _delGame() {
     });
 }
 
-
 function edit_Category(getid) {
     document.getElementById("get-category").setAttribute("value", getid)
     document.getElementById("getDel-category_id").setAttribute("value", getid)
     document.getElementById("getDel-category_name").setAttribute("value", getid)
 }
 
+
+function _addchilds(List_ItemGames, option) {
+    if (option == "add") {
+        var listChild = document.querySelector("#add_child").children;
+        var listChildA = Array.from(listChild);
+        var count_Child = listChildA.length
+        var addselect_child = document.getElementById("add_child");
+        var createselect = document.createElement("select")
+        createselect.setAttribute("id", `childitem${count_Child}`)
+        createselect.setAttribute("class", "form-select")
+        createselect.setAttribute("aria-label", `Default select example`)
+        var createoption = document.createElement("option")
+        createoption.setAttribute("selected", "")
+        createoption.textContent = "Chọn Child - Items Games " + count_Child
+        createselect.appendChild(createoption)
+        List_ItemGames = JSON.parse(List_ItemGames)
+        for (var key in List_ItemGames) {
+            var createoption_list = document.createElement("option")
+            createoption_list.setAttribute("value", List_ItemGames[key]['id_list'])
+            createoption_list.textContent = List_ItemGames[key]['name_game']
+            createselect.appendChild(createoption_list)
+        }
+        addselect_child.appendChild(createselect)
+    } else if (option == "edit") {
+        var listChild = document.querySelector("#edit_child").children;
+        var listChildA = Array.from(listChild);
+        var count_Child = listChildA.length
+        var addselect_child = document.getElementById("edit_child");
+        var createselect = document.createElement("select")
+        createselect.setAttribute("id", `edit_childitem${count_Child}`)
+        createselect.setAttribute("class", "form-select")
+        createselect.setAttribute("aria-label", `Default select example`)
+        var createoption = document.createElement("option")
+        createoption.setAttribute("selected", "")
+        createoption.textContent = "Chọn Child - Items Games " + count_Child
+        createselect.appendChild(createoption)
+        List_ItemGames = JSON.parse(List_ItemGames)
+        for (var key in List_ItemGames) {
+            var createoption_list = document.createElement("option")
+            createoption_list.setAttribute("value", List_ItemGames[key]['id_list'])
+            createoption_list.textContent = List_ItemGames[key]['name_game']
+            createselect.appendChild(createoption_list)
+        }
+        addselect_child.appendChild(createselect)
+    }
+}
+
 function getImageFromURL() {
+
     const input = prompt("Nhập URL", "https://play-lh.googleusercontent.com/CrHJi6586GgYkSRAtCYu10Pq5Bq6OrpHSjhj36At-9oGGIaCRLTbPsgkVpACFwrZHw")
     var preview = document.getElementById("preview");
     var previewImg = document.createElement("img");

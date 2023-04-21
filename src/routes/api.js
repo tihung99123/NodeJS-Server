@@ -25,4 +25,7 @@ router.get('/api/menugames/itemgames', apiController.getAllItemGames)
 // Lấy thông tin ItemGames bằng Id
 router.get('/api/menugames/itemgames/:id', apiController.getItemGameById)
 
+// Lấy thông tin ItemGames theo tên thể loại
+router.get('/api/menugames/itemgames/category/:id', apiController.getItemGameByCategory)
+
 module.exports = router

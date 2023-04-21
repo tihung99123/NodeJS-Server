@@ -51,6 +51,14 @@ let getItemGameById = async(req, res) => {
     res.json(info)
 }
 
+
+// Lấy thông tin ItemGames theo thể loại
+let getItemGameByCategory = async(req, res) => {
+    let info = await apiModels.getItemGameByCategory(req.params.id)
+    res.header("Content-Type", 'application/json');
+    res.json(info)
+}
+
 module.exports = {
     getAllRentAccount,
     getAllAccount,
@@ -58,5 +66,6 @@ module.exports = {
     getAllMenuGames,
     getAllCategory,
     getAllItemGames,
-    getItemGameById
+    getItemGameById,
+    getItemGameByCategory
 }

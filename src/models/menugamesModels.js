@@ -17,7 +17,7 @@ let getAllCategory = async() => {
 
 // Lấy toàn bộ thông tin itemgame của menu
 let getAllItemGames = async() => {
-    var sql = "SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id, menugames_batchcmd.encode_batchcmd FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list LEFT JOIN menugames_batchcmd on menugames_itemgames.id_list = menugames_batchcmd.id_list ORDER by number ASC;";
+    var sql = "SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.parameter, menugames_itemgames.child_id_list FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list ORDER by number ASC;";
     if (Type == "mysql") {
         let itemgames = await dbpool.promise().query(sql)
         return itemgames
@@ -136,8 +136,9 @@ module.exports = {
     },
     // thêm game vào menu bao gồm tất cả các thông tin chỉ số và các tham số hậu tố khác vào db
     addGame: function(addaccount, icongame, callback = () => {}) {
+        // console.log(addaccount);
         if (Type == "mysql") {
-            dbpool.query("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `exe`, `parameter`, `linkfolder_target`, `linkfolder_link`, `reg_id`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2], addaccount[3], addaccount[4], addaccount[5], addaccount[6], addaccount[7]], function(err, addGame) {
+            dbpool.query("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `parameter`, `child_id_list`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2].replace(/\\/g, "/"), addaccount[3], addaccount[4]], function(err, addGame) {
                 if (err) {
                     callback(err);
                 } else {
@@ -145,7 +146,6 @@ module.exports = {
                         if (err) {
                             callback(err);
                         } else {
-                            dbpool.execute('insert into menugames_batchcmd(id_list, encode_batch) values (?, ?)', [icongame.filename, addaccount[8]])
                             dbpool.execute('insert into menugames_sortorder(number, id_list, id_name) values (?, ?, ?)', [count[0]['number'] + 1, icongame.filename, icongame.filename]);
                             callback(null, "Thêm Thành công")
                         }
@@ -153,7 +153,7 @@ module.exports = {
                 }
             })
         } else if (Type == "sqlite") {
-            dbpool.db.run("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `exe`, `parameter`, `linkfolder_target`, `linkfolder_link`, `reg_id`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2].replace(/\\/g, "/"), addaccount[3].replace(/\\/g, "/"), addaccount[4], addaccount[5].replace(/\\/g, "/"), addaccount[6].replace(/\\/g, "/"), addaccount[7].replace(/\\/g, "/")], function(err, addGame) {
+            dbpool.db.run("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `parameter`, `child_id_list`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2].replace(/\\/g, "/"), addaccount[3], addaccount[4]], function(err, addGame) {
                 if (err) {
                     callback(err);
                 } else {
@@ -161,7 +161,6 @@ module.exports = {
                         if (err) {
                             callback(err);
                         } else {
-                            dbpool.db.run('insert into menugames_batchcmd(id_list, encode_batchcmd) values (?, ?)', [icongame.filename, addaccount[8]])
                             dbpool.db.run('insert into menugames_sortorder(number, id_list, id_name) values (?, ?, ?)', [count[0]['number'] + 1, icongame.filename, icongame.filename]);
                             callback(null, "Thêm Thành công")
                         }
@@ -174,12 +173,10 @@ module.exports = {
     editGame: function(addaccount, icongame, callback = () => {}) {
         if (Type == "mysql") {
             if (icongame == undefined) {
-                dbpool.execute(`UPDATE menugames_itemgames SET id_list='${addaccount[1]}',id_name='${addaccount[1]}',category_id='${addaccount[2]}',name_game='${addaccount[3]}',icon='${addaccount[4]}',folder='${addaccount[5]}',exe='${addaccount[6]}',parameter='${addaccount[7]}',linkfolder_target='${addaccount[8]}',linkfolder_link='${addaccount[9]}',reg_id='${addaccount[10]}' WHERE id_list ='${addaccount[1]}';`)
-                dbpool.execute(`UPDATE menugames_batchcmd set encode_batchcmd='${addaccount[11]}' where id_list ='${addaccount[1]}'`)
+                dbpool.execute(`UPDATE menugames_itemgames SET id_list='${addaccount[1]}',id_name='${addaccount[1]}',category_id='${addaccount[2]}',name_game='${addaccount[3]}',icon='${addaccount[4]}',folder='${addaccount[5]}',parameter='${addaccount[6]}',child_id_list='${addaccount[7]}' WHERE id_list ='${addaccount[1]}';`)
                 callback("1-Chinh sửa thành công")
             } else {
-                dbpool.execute(`UPDATE menugames_itemgames SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',category_id='${addaccount[1]}',name_game='${addaccount[2]}',icon='${icongame.filename}',folder='${addaccount[4]}',exe='${addaccount[5]}',parameter='${addaccount[6]}',linkfolder_target='${addaccount[7]}',linkfolder_link='${addaccount[8]}',reg_id='${addaccount[9]}' WHERE id_list ='${addaccount[0]}';`)
-                dbpool.execute(`UPDATE menugames_batchcmd set encode_batchcmd='${addaccount[11]}' where id_list ='${addaccount[1]}'`)
+                dbpool.execute(`UPDATE menugames_itemgames SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',category_id='${addaccount[1]}',name_game='${addaccount[2]}',icon='${icongame.filename}',folder='${addaccount[4]}',parameter='${addaccount[5]}',child_id_list='${addaccount[6]}' WHERE id_list ='${addaccount[0]}';`)
                 fs.unlink('./src/public/images/' + addaccount[3], (err) => {
                     if (err) {
                         throw err;
@@ -190,12 +187,10 @@ module.exports = {
             }
         } else if (Type == "sqlite") {
             if (icongame == undefined) {
-                dbpool.db.run(`UPDATE menugames_itemgames SET id_list='${addaccount[1]}',id_name='${addaccount[1]}',category_id='${addaccount[2]}',name_game='${addaccount[3]}',icon='${addaccount[4]}',folder='${addaccount[5]}',exe='${addaccount[6]}',parameter='${addaccount[7]}',linkfolder_target='${addaccount[8]}',linkfolder_link='${addaccount[9]}',reg_id='${addaccount[10]}' WHERE id_list ='${addaccount[1]}';`)
-                dbpool.db.run(`UPDATE menugames_batchcmd set encode_batchcmd='${addaccount[11]}' where id_list ='${addaccount[1]}'`)
+                dbpool.db.run(`UPDATE menugames_itemgames SET id_list='${addaccount[1]}',id_name='${addaccount[1]}',category_id='${addaccount[2]}',name_game='${addaccount[3]}',icon='${addaccount[4]}',folder='${addaccount[5]}',parameter='${addaccount[6]}',child_id_list='${addaccount[7]}' WHERE id_list ='${addaccount[1]}';`)
                 callback("1-Chinh sửa thành công")
             } else {
-                dbpool.db.run(`UPDATE menugames_itemgames SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',category_id='${addaccount[1]}',name_game='${addaccount[2]}',icon='${icongame.filename}',folder='${addaccount[4]}',exe='${addaccount[5]}',parameter='${addaccount[6]}',linkfolder_target='${addaccount[7]}',linkfolder_link='${addaccount[8]}',reg_id='${addaccount[9]}' WHERE id_list ='${addaccount[0]}';`)
-                dbpool.db.run(`UPDATE menugames_batchcmd set encode_batchcmd='${addaccount[11]}' where id_list ='${addaccount[1]}'`)
+                dbpool.db.run(`UPDATE menugames_itemgames SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',category_id='${addaccount[1]}',name_game='${addaccount[2]}',icon='${icongame.filename}',folder='${addaccount[4]}',parameter='${addaccount[5]}',child_id_list='${addaccount[6]}' WHERE id_list ='${addaccount[0]}';`)
                 fs.unlink('./src/public/images/' + addaccount[3], (err) => {
                     if (err) {
                         throw err;
@@ -205,6 +200,7 @@ module.exports = {
                 callback("2-Chinh sửa thành công")
             }
         }
+        7
     },
     // xoá item game và xoá cả hình ảnh
     delGame: function(delGame, callback = () => {}) {

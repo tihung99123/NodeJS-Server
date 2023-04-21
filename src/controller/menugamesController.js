@@ -70,6 +70,7 @@ let addGame = async(req, res) => {
     let icongame = req.file
     menugamesModels.addGame(addaccount, icongame, function(err, result) {
         if (err) {
+            console.log(err);
             return res.send("Lỗi")
         } else {
             return res.send(result)

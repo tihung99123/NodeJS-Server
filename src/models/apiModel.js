@@ -47,7 +47,7 @@ let getAccountById = async(id) => {
 // Lấy toàn bộ thông tin menugames
 let getAllMenuGames = async() => {
     var sql_1 = "select * from `menugames_category`";
-    var sql_2 = "SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;";
+    var sql_2 = "SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.parameter FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;";
     if (Type == "mysql") {
         let category = await dbpool.promise().query(sql_1)
         let itemgames = await dbpool.promise().query(sql_2)
@@ -74,7 +74,7 @@ let getAllCategory = async() => {
 
 // Lấy toàn bộ ItemGames
 let getAllItemGames = async() => {
-    var sql = "SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.exe, menugames_itemgames.parameter, menugames_itemgames.linkfolder_target, menugames_itemgames.linkfolder_link, menugames_itemgames.reg_id FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list;";
+    var sql = "SELECT menugames_sortorder.number, menugames_itemgames.id_list, menugames_itemgames.category_id, menugames_itemgames.name_game, menugames_itemgames.icon, menugames_itemgames.folder, menugames_itemgames.parameter FROM menugames_itemgames LEFT JOIN menugames_sortorder ON menugames_itemgames.id_list = menugames_sortorder.id_list ORDER BY number ASC;";
     if (Type == "mysql") {
         let itemgames = await dbpool.promise().query(sql)
         return { ItemGames: itemgames[0] }
@@ -96,6 +96,18 @@ let getItemGameById = async(id) => {
     }
 }
 
+// Lấy ItemGames theo danh sách thể loại
+let getItemGameByCategory = async(id) => {
+    var sql = "SELECT * FROM `menugames_itemgames` WHERE menugames_itemgames.category_id = ?;"
+    if (Type == "mysql") {
+        let itemgame = await dbpool.promise().query(sql, [id])
+        return { ItemGame: itemgame[0] }
+    } else if (Type == "sqlite") {
+        let itemgame = await dbpool.get(sql, [id])
+        return { ItemGame: itemgame }
+    }
+}
+
 module.exports = {
     getAllRentAccount,
     getAllAccount,
@@ -103,5 +115,6 @@ module.exports = {
     getAllMenuGames,
     getAllCategory,
     getAllItemGames,
-    getItemGameById
+    getItemGameById,
+    getItemGameByCategory
 }
