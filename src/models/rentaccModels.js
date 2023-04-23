@@ -2,7 +2,8 @@ var dbpool = require("../config/connectDB")
 require('dotenv').config()
 const Type = process.env.TYPE_SQL || "sqlite"
 
-let getAllNameGame = async () => {
+// lấy toàn bộ thông tin loại game từ controller
+let getAllNameGame = async() => {
     var sql = "SELECT * FROM `rentaccount_namegame`";
     if (Type == "mysql") {
         let namegame = await dbpool.promise().query(sql)
@@ -13,7 +14,8 @@ let getAllNameGame = async () => {
     }
 }
 
-let getAllAccount = async () => {
+//lấy toàn bộ thông tin tài khoản từ controller
+let getAllAccount = async() => {
     var sql = "SELECT rentaccount_account.id,rentaccount_account.typegame,rentaccount_account.account,rentaccount_account.password,rentaccount_status.clientid,rentaccount_status.clientname FROM `rentaccount_account` LEFT JOIN `rentaccount_status` ON rentaccount_account.id = rentaccount_status.id;"
     if (Type == "mysql") {
         let account = await dbpool.promise().query(sql)
@@ -27,6 +29,7 @@ let getAllAccount = async () => {
 module.exports = {
     getAllNameGame,
     getAllAccount,
+    // thêm loại game mới từ controller
     addTypeGame: function(typegame, settingmacro, callback = () => {}) {
         var sql = "select * from rentaccount_namegame where typegame = ?"
         if (Type == "mysql") {
@@ -57,6 +60,7 @@ module.exports = {
             });
         }
     },
+    // chỉnh sửa loại game từ controller
     editTypeGame: function(typegameold, settingmacroold, typegamenew, settingmacronew, callback = () => {}) {
         var sql = `UPDATE rentaccount_namegame SET typegame = ?, settingmacro = ? WHERE typegame = ? AND settingmacro = ?`
         if (Type == "mysql") {
@@ -76,8 +80,8 @@ module.exports = {
                 }
             })
         }
-
     },
+    // xoá loại game từ controller
     delTypeGame: function(typegame) {
         if (Type == "mysql") {
             dbpool.execute('DELETE FROM rentaccount_namegame WHERE typegame = ?', [typegame])
@@ -88,6 +92,7 @@ module.exports = {
         }
 
     },
+    // thêm tài khoản mới từ controller
     addAccount: function(typegame, taikhoan, matkhau, callback = () => {}) {
         if (Type == "mysql") {
             dbpool.query(`select * from rentaccount_account where typegame = ? and account = '${taikhoan}'`, typegame, function(err, account) {
@@ -160,8 +165,8 @@ module.exports = {
                 }
             })
         }
-
     },
+    // chỉnh sửa tài khoản từ controller
     editAccount: function(idaccount, typegamenew, taikhoannew, matkhaunew, callback = () => {}) {
         if (Type == "mysql") {
             dbpool.query('select * from rentaccount_account where id = ?', idaccount, function(err, result) {
@@ -202,8 +207,8 @@ module.exports = {
                 }
             })
         }
-
     },
+    // xoá tài khoản từ controller
     delAccount: function(typegame, taikhoan) {
         if (Type == "mysql") {
             dbpool.execute(`DELETE FROM rentaccount_account WHERE typegame = ? and account = ?`, [typegame, taikhoan])

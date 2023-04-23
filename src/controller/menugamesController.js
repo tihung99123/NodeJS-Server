@@ -4,10 +4,9 @@ const { PythonShell } = require('python-shell');
 
 const Type = process.env.TYPE_SQL || "sqlite"
 
-
+// khởi tạo trang chính và gửi danh sách thể loại 
+// danh sách game có sắp xếp đồng thời gửi cả danh sách công cụ
 let getHomepage = async(req, res) => {
-
-
     let list_category = await menugamesModels.getAllCategory()
     let list_itemgames = await menugamesModels.getAllItemGames()
     if (Type == "mysql") {
@@ -15,16 +14,11 @@ let getHomepage = async(req, res) => {
     } else if (Type == "sqlite") {
         return res.render('index-menugames', { List_Category: JSON.stringify(list_category), List_ItemGames: JSON.stringify(list_itemgames) })
     }
-
 }
 
-let saveListGame = async(req, res) => {
-    let saved_listgame = req.body.item
-    menugamesModels.saveListGame(saved_listgame, function(call) {
-        return res.redirect(call);
-    })
-}
 
+// thêm thể loại mới vào máy chủ
+// bao gồm tên vào modal
 let addCategory = async(req, res) => {
     let { category_name } = req.body;
     menugamesModels.addCategory(category_name, function(err, result) {
@@ -36,6 +30,8 @@ let addCategory = async(req, res) => {
     })
 }
 
+// chỉnh sửa thể loại
+// bao gồm id và tên vào modal
 let editCategory = async(req, res) => {
     let { id, category_new } = req.body;
     menugamesModels.editCategory(id, category_new, function(err, result) {
@@ -47,6 +43,8 @@ let editCategory = async(req, res) => {
     })
 }
 
+//xoá thể loại
+// bao gồm id và tên vào modal
 let delCategory = async(req, res) => {
     let { id, name } = req.body
     menugamesModels.delCategory(id, name, function(result) {
@@ -54,6 +52,84 @@ let delCategory = async(req, res) => {
     })
 }
 
+// lưu lại danh sách sắp xếp menugames
+// bao gồm number và id_list vào modal
+let saveListTool = async(req, res) => {
+    let saved_listtool = req.body.item
+    menutoolsModels.saveListTool(saved_listtool, function(call) {
+        return res.redirect(call);
+    })
+}
+
+// thêm tool
+//bao gồm hình ảnh, tên tool, thư mục tool, hậu tố
+let addTool = async(req, res) => {
+    let options = {
+        mode: 'text',
+        pythonOptions: ['-u'],
+        scriptPath: 'py_services/',
+        args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
+    };
+    PythonShell.run('imageprocess.py', options, function(err, result) {
+        if (err) throw err;
+        console.log('result: ', result.toString());
+    });
+
+    let addaccount = req.body.AddTool
+    let icontool = req.file
+    menutoolsModels.addTool(addaccount, icontool, function(err, result) {
+        if (err) {
+            console.log(err);
+            return res.send("Lỗi")
+        } else {
+            return res.send(result)
+        }
+    })
+}
+
+//chỉnh sửa tool
+//bao gồm hình ảnh, tên tool, thư mục tool, hậu tố
+let editTool = async(req, res) => {
+    if (req.file != undefined) {
+        let options = {
+            mode: 'text',
+            pythonOptions: ['-u'],
+            scriptPath: 'py_services/',
+            args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
+        };
+        PythonShell.run('imageprocess.py', options, function(err, result) {
+            if (err) throw err;
+            console.log('result: ', result.toString());
+        });
+    }
+
+    let addaccount = req.body.EditTool
+    let icontool = req.file
+    menutoolsModels.editTool(addaccount, icontool, function(result) {
+        return res.send(result)
+    })
+}
+
+// xoá tool
+// bao gồm id_list vào modal
+let delTool = async(req, res) => {
+    let delTool = req.body
+    menutoolsModels.delTool(delTool, function(result) {
+        return res.send(result)
+    })
+}
+
+// lưu lại danh sách sắp xếp menugames
+// bao gồm number và id_list vào modal
+let saveListGame = async(req, res) => {
+    let saved_listgame = req.body.item
+    menugamesModels.saveListGame(saved_listgame, function(call) {
+        return res.redirect(call);
+    })
+}
+
+// thêm game
+//bao gồm hình ảnh, thể loại, tên game, thư mục game, hậu tố, và danh sách đề xuất vào modal
 let addGame = async(req, res) => {
     let options = {
         mode: 'text',
@@ -78,6 +154,8 @@ let addGame = async(req, res) => {
     })
 }
 
+//chỉnh sửa game
+//bao gồm hình ảnh, thể loại, tên game, thư mục game, hậu tố, và danh sách đề xuất vào modal
 let editGame = async(req, res) => {
     if (req.file != undefined) {
         let options = {
@@ -91,6 +169,7 @@ let editGame = async(req, res) => {
             console.log('result: ', result.toString());
         });
     }
+
     let addaccount = req.body.EditGame
     let icongame = req.file
     menugamesModels.editGame(addaccount, icongame, function(result) {
@@ -98,10 +177,25 @@ let editGame = async(req, res) => {
     })
 }
 
+// xoá game
+// bao gồm id_list vào modal
 let delGame = async(req, res) => {
     let delGame = req.body
     menugamesModels.delGame(delGame, function(result) {
         return res.send(result)
     })
 }
-module.exports = { getHomepage, saveListGame, addCategory, editCategory, delCategory, addGame, editGame, delGame }
+module.exports = {
+    getHomepage,
+    addCategory,
+    editCategory,
+    delCategory,
+    saveListGame,
+    addGame,
+    editGame,
+    delGame,
+    saveListTool,
+    addTool,
+    editTool,
+    delTool
+}

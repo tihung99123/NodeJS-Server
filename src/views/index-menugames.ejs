@@ -14,48 +14,79 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="javascripts/menugames.js"></script>
     <link rel="stylesheet" href="css/dropzone/dropzone.min.css" />
-
+    <% var List_ItemGames = JSON.parse(List_ItemGames) %>
+        <% var List_Category = JSON.parse(List_Category) %>
 </head>
+
 
 <body>
     <!-- Category /..... List -->
-    <div>
-        <div>
-            <div style="width: 33%; display:block ">
+    <table style="width: 100%;">
+        <tr>
+            <td>
                 <div>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddCategory">Thêm Thể Loại</button>
-                </div>
-                <div>
-                    <% var List_Category = JSON.parse(List_Category) %>
-                        <table class="table">
-                            <thead>
-                                <tr style="text-align: center;">
-                                    <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">ID</th>
-                                    <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Tên Games</th>
-                                    <th scope="col" style="text-align: right;"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% for (var key in List_Category) { %>
-                                    <tr>
-                                        <td style="border-left: 1px solid;border-right: 1px solid;">
-                                            <%= List_Category[key]["id"] %>
-                                        </td>
-                                        <td style="border-left: 1px solid;border-right: 1px solid;">
-                                            <%= List_Category[key]["name"] %>
-                                        </td>
-                                        <td style="text-align: right;">
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Chỉnh sửa</button>
-                                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Xoá</button>
-                                        </td>
+                    <div style="display:block ">
+                        <div style="text-align: center;">
+                            <label style="color: white;">-------------------------------Thể loại------------------------</label>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddCategory">Thêm Thể Loại</button>
+                        </div>
+                        <div>
+                            <table class="table">
+                                <thead>
+                                    <tr style="text-align: center;">
+                                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">ID</th>
+                                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Tên thể loại</th>
+                                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid">Edit</th>
+                                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Lên/Xuống</th>
                                     </tr>
-                                    <% } %>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <% for (var key in List_Category) { %>
+                                        <tr>
+                                            <td style="border-left: 1px solid;border-right: 1px solid;">
+                                                <%= List_Category[key]["id"] %>
+                                            </td>
+                                            <td style="border-left: 1px solid;border-right: 1px solid;">
+                                                <%= List_Category[key]["name"] %>
+                                            </td>
+                                            <td style="border-left: 1px solid;border-right: 1px solid; text-align: center;">
+
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Chỉnh sửa</button>
+                                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Xoá</button>
+                                            </td>
+                                            <td style="border-left: 1px solid;border-right: 1px solid;text-align: center;">
+                                                <button>Lên</button>
+                                                <button>Xuống</button>
+                                            </td>
+                                        </tr>
+                                        <% } %>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+            </td>
+
+            <td style="width: 70%;">
+                <!-- Thêm Tool Công Cụ -->
+                <div class="container">
+                    <div style="text-align: right;">
+                        <button type="button" class="btn btn-primary" id="edit-set-tool" data-toggle="modal" data-target="#ModalEditTool" disabled>Chỉnh Sửa</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddTool">Thêm Tool</button>
+                        <button type="button" class="btn btn-primary" onclick="window.location.href = '/menugames';">RESET</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalSaveListTools">Lưu Lại</button>
+                    </div>
+                    <div id="basic-grid_tool" class="row text-center">
+                        <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_tools-" api_id="" ondblclick="Edit_SetTool()">
+                            <img src="./images/" disabled>
+                            <div class="text-items">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </table>
 
     <!-- Menugame Đã Setting -->
     <div class="container">
@@ -67,14 +98,13 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalSaveListGames">Lưu Lại</button>
         </div>
         <div id="basic-grid" class="row text-center">
-            <% var List_ItemGames = JSON.parse(List_ItemGames) %>
-                <% var IdandName = []%>
-                    <% for (var key in List_ItemGames) { %>
-                        <% IdandName.push({ id_list:List_ItemGames[key]['id_list'], name_game:List_ItemGames[key]['name_game'] })%>
-                            <% } %>
-                                <% for (var key in List_ItemGames) { %>
-                                    <% if (List_ItemGames[key]['category_id'] != undefined ) { %>
-                                        <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" api_id="<%= List_ItemGames[key]['id_list'] %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
+            <% var IdandName = []%>
+                <% for (var key in List_ItemGames) { %>
+                    <% IdandName.push({ id_list:List_ItemGames[key]['id_list'], name_game:List_ItemGames[key]['name_game'] })%>
+                        <% } %>
+                            <% for (var key in List_ItemGames) { %>
+                                <% if (List_ItemGames[key]['category_id'] != undefined ) { %>
+                                    <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_games-<%= key %>" api_id="<%= List_ItemGames[key]['id_list'] %>" ondblclick="Edit_SetGame(`<%= List_ItemGames[key]['id_list'] %>`,
                             `<%= List_ItemGames[key]['name_game'] %>`,
                             `<%= List_ItemGames[key]['icon'] %>`,
                             `<%= List_ItemGames[key]['category_id'] %>`,
@@ -83,13 +113,13 @@
                             `<%= List_ItemGames[key]['parameter'] %>`,
                             `<%= List_ItemGames[key]['child_id_list'] %>`,
                             `<%= JSON.stringify(IdandName) %>` )">
-                                            <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
-                                            <div class="text-items">
-                                                <%= List_ItemGames[key]['name_game'] %>
-                                            </div>
+                                        <img src="./images/<%= List_ItemGames[key]['icon'] %>" disabled>
+                                        <div class="text-items">
+                                            <%= List_ItemGames[key]['name_game'] %>
                                         </div>
+                                    </div>
+                                    <% } %>
                                         <% } %>
-                                            <% } %>
         </div>
     </div>
 
@@ -199,6 +229,132 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
                         <button type="submit" class="btn btn-primary">Chấp nhận</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm Tool -->
+    <div class="modal fade" id="ModalAddTool" tabindex="-1" role="dialog" aria-labelledby="ModalAddToolLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalAddToolLabel">Thêm Tool</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+                </div>
+                <div class="modal-body">
+
+                    <body>
+                        <label>Biểu tượng Tool:</label>
+                        <div style="width: 100%;display: block;height: 5cm;">
+                            <div class="uploadOuter dropzone" id="dropzone-imageicontool" style="display: inline-block;">
+                                <span class="dragBox">
+                                    Nhấp hoặc kéo thả vào đây!
+                                    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddTool"/>
+                                </span>
+                            </div>
+                            <div id="preview" style="display: inline-block;width: 35%;"></div>
+                        </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td>Tên Tool:</td>
+                                    <td><input type="text" placeholder="Nhập tên" id="name_tool"></td>
+                                </tr>
+                                <tr>
+                                    <td>Thư Mục:</td>
+                                    <td><input type="text" placeholder="Nhập đường dẫn" id="folder_tool"></td>
+                                </tr>
+                                <tr>
+                                    <td>Hậu tố:</td>
+                                    <td><input type="text" placeholder="Nhập hậu tố" id="parameter_tool"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </body>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
+                    <button type="submit" class="btn btn-primary" onclick="_addTool()">Chấp nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal lưu danh sách tools -->
+    <div class="modal fade" id="ModalSaveListTools" tabindex="-1" role="dialog" aria-labelledby="ModalSaveListToolsLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalSaveListToolsLabel">Lưu Lại danh sách tool</h5>
+                    <button type="button" class="close1" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+                </div>
+                <div class="modal-body">
+                    Bạn sẽ lưu lại chứ, nếu lưu đồng thời sẽ không sắp xếp lại như lúc trước ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
+                    <button type="submit" class="btn btn-primary" onclick="CHECKOKSAVE_Tool()">Chấp nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal chỉnh tools -->
+    <div class="modal fade" id="ModalEditTool" tabindex="-1" role="dialog" aria-labelledby="ModalEditToolLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalEditToolLabel">Chỉnh tool</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+                </div>
+                <div class="modal-body">
+
+                    <body>
+                        <label>Biểu tượng tool:</label>
+                        <div style="width: 100%;display: block;height: 4cm;">
+                            <div class="uploadOuter dropzone" id="dropzone-imageicontool" style="display: inline-block;">
+                                <span class="dragBox">
+                                    Nhấp hoặc kéo thả vào đây!
+                                    <input type="file" onChange="dragNdrop_edit(event)"  ondragover="drag()" ondrop="drop()" id="EditTool"  />
+                                </span>
+                            </div>
+                            <div id="preview-edit" style="display: inline-block;width: 35%;"></div>
+                        </div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <td>API / ID Tool:</td>
+                                    <td id="api_id-edit"></td>
+                                </tr>
+                                <tr>
+                                    <td>Tên Tool:</td>
+                                    <td><input type="text" placeholder="Nhập tên" id="name_tool-edit">
+                                        <input type="text" id="icon-tool-old-edit" hidden></td>
+                                </tr>
+                                <tr>
+                                    <td>Thư Mục:</td>
+                                    <td><input type="text" placeholder="Nhập đường dẫn" id="folder-tool-edit"></td>
+                                </tr>
+                                <tr>
+                                    <td>Hậu tố:</td>
+                                    <td><input type="text" placeholder="Nhập hậu tố" id="parameter-tool-edit"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </body>
+                </div>
+                <div class="modal-footer">
+                    <input hidden id="del-typetoolinput" name="typetool">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
+                    <button type="submit" class="btn btn-danger" onclick="_delTool()">Xoá</button>
+                    <button type="submit" class="btn btn-primary" onclick="_editTool()">Chấp nhận</button>
                 </div>
             </div>
         </div>

@@ -1,6 +1,7 @@
 var dbpool = require('../config/connectDB')
 var rentaccModels = require('../models/rentaccModels')
 var menugamesModels = require('../models/menugamesModels')
+var fs = require("fs");
 
 require('dotenv').config()
 const Type = process.env.TYPE_SQL
@@ -154,7 +155,12 @@ const socketio = (httpServer) => {
                 server.emit("DISCONNECT_Menu")
             }
         })
-
+        server.on('upload', (delelefolder, file_path, { chunk }) => {
+            // write the chunk to a file
+            const writeStream = fs.createWriteStream("./FolderDownload" + file_path.replace(delelefolder, "").replace("\\", "/"), { flags: 'a' })
+            writeStream.write(chunk);
+            writeStream.end();
+        });
     })
 }
 

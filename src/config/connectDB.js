@@ -2,7 +2,9 @@ require('dotenv').config()
 
 const Type = process.env.TYPE_SQL || "sqlite"
 
+
 if (Type == "mysql") {
+    //khởi tạo truy xuất cơ sở dữ liệu mysql
     console.log("Connect MYSQL");
     var mysql = require('mysql2')
 
@@ -21,31 +23,33 @@ if (Type == "mysql") {
         }
     })
     module.exports = conn
-
 } else if (Type == "sqlite") {
+    //khởi tạo truy xuất cơ sở dữ liệu sqlite
     console.log("Connect SQLITE");
     var sqlite3 = require('sqlite3').verbose()
     var all = function(sql) {
+        //khởi tạo hàm promise sqlite (all)
         return new Promise((resolve, reject) => {
             const db = new sqlite3.Database('./data/' + process.env.SQLITE_NAMEFILE);
             const queries = [];
             db.each(`${sql}`, (err, row) => {
                 if (err) {
-                    reject(err); // optional: you might choose to swallow errors.
+                    reject(err); // tùy chọn: bạn có thể chọn nuốt lỗi.
                 } else {
-                    queries.push(row); // accumulate the data
+                    queries.push(row); // tích lũy dữ liệu
                 }
             }, (err, n) => {
                 if (err) {
-                    reject(err); // optional: again, you might choose to swallow this error.
+                    reject(err); // tùy chọn: một lần nữa, bạn có thể chọn chấp nhận lỗi này.
                 } else {
-                    resolve(queries); // resolve the promise
+                    resolve(queries); // giải quyết lời hứa
                 }
             });
             db.close()
         });
     }
     var get = function(sql, [order]) {
+        //khởi tạo hàm promise sqlite (get)
         return new Promise((resolve, reject) => {
             const db = new sqlite3.Database('./data/' + process.env.SQLITE_NAMEFILE);
             const queries = [];
@@ -66,13 +70,14 @@ if (Type == "mysql") {
         });
     }
     let db = new sqlite3.Database('./data/' + process.env.SQLITE_NAMEFILE, (err) => {
+        //khởi tạo sqlite
         if (err) {
             return console.error(err.message);
         }
         console.log('Kết nối đến DBSQLITE thành công.');
     });
     module.exports = { all, get, db }
-
 } else {
+    //nếu lỗi khai báo trong env
     console.log("Setting ENV Chưa cài đặt đúng");
 }
