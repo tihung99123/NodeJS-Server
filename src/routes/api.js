@@ -20,6 +20,9 @@ router.get('/api/menugames', apiController.getAllMenuGames)
 router.get('/api/menugames/category', apiController.getAllCategory)
 
 // Lấy toàn bộ ItemGames
+router.get('/api/menugames/itemtools', apiController.getAllItemTools)
+
+// Lấy toàn bộ ItemGames
 router.get('/api/menugames/itemgames', apiController.getAllItemGames)
 
 // Lấy thông tin ItemGames bằng Id

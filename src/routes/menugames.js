@@ -17,8 +17,11 @@ router.post("/menugames/edit-category", menugamesController.editCategory)
 // xoá thể loại
 router.post("/menugames/del-category", menugamesController.delCategory)
 
+//chỉnh sửa danh sách category
+router.post("/menugames/data_send_menugames_sortorder_category", menugamesController.saveListCategory)
+
 //chỉnh sửa danh sách menugames
-router.post("/menugames/data_send_menugames_sortorder", menugamesController.saveListGame)
+router.post("/menugames/data_send_menugames_sortorder_game", menugamesController.saveListGame)
 
 // thêm game đồng thởi thêm arg upload ảnh lên máy chủ
 router.post("/menugames/add-game", upload.single('AddGame'), menugamesController.addGame)
@@ -30,7 +33,7 @@ router.post("/menugames/edit-game", upload.single('EditGame'), menugamesControll
 router.post("/menugames/del-game", menugamesController.delGame)
 
 //chỉnh sửa danh sách menugames của box tool
-router.post("/menugames/data_send_menugames_sortorder_tools", menugamesController.saveListTool)
+router.post("/menugames/data_send_menugames_sortorder_tool", menugamesController.saveListTool)
 
 // thêm tool đồng thởi thêm arg upload ảnh lên máy chủ
 router.post("/menugames/add-tool", upload.single('AddTool'), menugamesController.addTool)

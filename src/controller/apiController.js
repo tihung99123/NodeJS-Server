@@ -37,6 +37,13 @@ let getAllCategory = async(req, res) => {
     res.json(info)
 }
 
+// Lấy toàn bộ ItemTools
+let getAllItemTools = async(req, res) => {
+    let info = await apiModels.getAllItemTools()
+    res.header("Content-Type", 'application/json');
+    res.json(info)
+}
+
 // Lấy toàn bộ ItemGames
 let getAllItemGames = async(req, res) => {
     let info = await apiModels.getAllItemGames()
@@ -65,6 +72,7 @@ module.exports = {
     getAccountId,
     getAllMenuGames,
     getAllCategory,
+    getAllItemTools,
     getAllItemGames,
     getItemGameById,
     getItemGameByCategory

@@ -16,5 +16,6 @@ datas = img.getdata()
 #         new_data.append(item)
 
 # img.putdata(new_data)
+
 img.thumbnail((512,512))
 img.save(sys.argv[2],"PNG")

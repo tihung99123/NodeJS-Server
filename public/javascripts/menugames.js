@@ -10,11 +10,10 @@ function getOrder() {
             moveElement(data[2]["element"], data[3]["element"]); //3 before 4
             moveElement(data[1]["element"], data[2]["element"]); //2 before 3
             moveElement(data[0]["element"], data[1]["element"]); //1 before 2
-            setTimeout(gridDragInit(), 2);
+            setTimeout(gridDragInit(), 0.5);
         }
     });
 }
-
 
 //hàm khởi tạo di chuyển các block
 function moveElement(move, toBeBefore) {
@@ -23,13 +22,14 @@ function moveElement(move, toBeBefore) {
 
 function gridDragInit() {
     $("#basic-grid").gridstrap();
+    $("#basic-grid_tool").gridstrap();
 }
 
-// Gửi tất cả thứ tự list game vào server dể cập nhật
-function updateOrder(item) {
+// Gửi tất cả thứ tự list thể loại vào server dể cập nhật
+function updateOrder_Category(item) {
     $.ajax({
         type: "POST",
-        url: "./menugames/data_send_menugames_sortorder",
+        url: "./menugames/data_send_menugames_sortorder_category",
         data: { item },
         success: function() {
             console.log("done");
@@ -38,10 +38,10 @@ function updateOrder(item) {
 }
 
 // Gửi tất cả thứ tự list tool vào server dể cập nhật
-function updateOrder_tool(item) {
+function updateOrder_Tool(item) {
     $.ajax({
         type: "POST",
-        url: "./menugames/data_send_menugames_sortorder",
+        url: "./menugames/data_send_menugames_sortorder_tool",
         data: { item },
         success: function() {
             console.log("done");
@@ -49,8 +49,38 @@ function updateOrder_tool(item) {
     });
 }
 
+// Gửi tất cả thứ tự list game vào server dể cập nhật
+function updateOrder_Game(item) {
+    $.ajax({
+        type: "POST",
+        url: "./menugames/data_send_menugames_sortorder_game",
+        data: { item },
+        success: function() {
+            console.log("done");
+        }
+    });
+}
+
+
+//lấy toàn bộ thông tin theo thứ tự đã sắp xếp vào mảng (thể loại)
+function CHECKOKSAVE_Category() {
+    var listCategory = document.querySelector("#table_tbody_category").children;
+    var listArray = Array.from(listCategory);
+    var Categorylist = []
+    var counter = 0;
+    listArray.forEach((item) => {
+        counter++;
+        if (item.id.includes("id_category-")) {
+            Categorylist.push({ number: counter, category_name: item.getAttribute("category_name") })
+        }
+    });
+    updateOrder_Category(Categorylist)
+    window.location.href = "/menugames";
+}
+
+
 //lấy toàn bộ thông tin theo thứ tự đã sắp xếp vào mảng (game)
-function CHECKOKSAVE() {
+function CHECKOKSAVE_Game() {
     var listItems = document.querySelector("#basic-grid").children;
     var listArray = Array.from(listItems);
     var itemlist = []
@@ -61,7 +91,7 @@ function CHECKOKSAVE() {
             itemlist.push({ number: counter, api_id: item.getAttribute("api_id") })
         }
     });
-    updateOrder(itemlist)
+    updateOrder_Game(itemlist)
     window.location.href = "/menugames";
 }
 
@@ -77,7 +107,7 @@ function CHECKOKSAVE_Tool() {
             itemlist.push({ number: counter, api_id: item.getAttribute("api_id") })
         }
     });
-    updateOrder_tool(itemlist)
+    updateOrder_Tool(itemlist)
     window.location.href = "/menugames";
 }
 
@@ -86,7 +116,7 @@ function CHECKOKSAVE_Tool() {
 //kẻo thả vào ô trong modalbox hình ảnh(addgame)
 function dragNdrop(event) {
     var fileName = URL.createObjectURL(event.target.files[0]);
-    var preview = document.getElementById("preview");
+    var preview = document.getElementById("preview-game");
     var previewImg = document.createElement("img");
     previewImg.setAttribute("src", fileName);
     preview.innerHTML = "";
@@ -106,7 +136,7 @@ function dragNdrop_edit(event) {
 //kẻo thả vào ô trong modalbox hình ảnh(addtool)
 function dragNdrop_tool(event) {
     var fileName = URL.createObjectURL(event.target.files[0]);
-    var preview = document.getElementById("preview_tool");
+    var preview = document.getElementById("preview-tool");
     var previewImg = document.createElement("img");
     previewImg.setAttribute("src", fileName);
     preview.innerHTML = "";
@@ -116,7 +146,7 @@ function dragNdrop_tool(event) {
 //kẻo thả vào ô trong modalbox hình ảnh(edittool)
 function dragNdrop_tool_edit(event) {
     var fileName = URL.createObjectURL(event.target.files[0]);
-    var preview = document.getElementById("preview-tool_edit");
+    var preview = document.getElementById("preview-tool-edit");
     var previewImg = document.createElement("img");
     previewImg.setAttribute("src", fileName);
     preview.innerHTML = "";
@@ -155,7 +185,7 @@ function _addTool() {
     formData.append('AddTool', folder);
     formData.append('AddTool', parameter);
 
-    fetch('/menutools/add-tool', {
+    fetch('/menugames/add-tool', {
             method: 'POST',
             body: formData
         })
@@ -171,11 +201,11 @@ function _addTool() {
 
 //chỉnh sửa tool get id từ các element vào mảng và up lên máy chủ
 function _editTool() {
-    var api_id = document.getElementById("api_id-edit").textContent
-    var name_tool = document.getElementById("name_tool-edit");
-    var icon_old = document.getElementById("icon-old-edit");
-    var folder = document.getElementById("folder-tool-edit");
-    var parameter = document.getElementById("parameter-tool-edit");
+    var api_id = document.getElementById("api_id-edit_tool").textContent
+    var name_tool = document.getElementById("name_tool-edit_tool");
+    var icon_old = document.getElementById("icon-old-edit_tool");
+    var folder = document.getElementById("folder-edit_tool");
+    var parameter = document.getElementById("parameter-edit_tool");
 
 
     const fileInput = document.getElementById('EditTool');
@@ -204,7 +234,7 @@ function _editTool() {
         formData.append('EditTool', parameter.placeholder);
     }
 
-    fetch('/menugames/edit-game', {
+    fetch('/menugames/edit-tool', {
             method: 'POST',
             body: formData
         })
@@ -220,8 +250,8 @@ function _editTool() {
 
 //xoá tool get id từ các element vào mảng và up lên máy chủ
 function _delTool() {
-    var api_id = document.getElementById("api_id-edit").textContent
-    var icon_old = document.getElementById("icon-tool-old-edit").placeholder;
+    var api_id = document.getElementById("api_id-edit_tool").textContent
+    var icon_old = document.getElementById("icon-old-edit_tool").placeholder;
     $.ajax({
         type: "POST",
         url: "./menugames/del-tool",
@@ -234,10 +264,10 @@ function _delTool() {
 }
 
 //chỉnh sửa các thông tin trong modal box của chỉnh sửa công cụ
-function Edit_SetTool(id_list, name, icon, category_id, name_game, folder, parameter, child_item, data_child) {
+function Edit_SetTool(id_list, name, icon, name_game, folder, parameter) {
 
 
-    var edit_set_game = document.getElementById('edit-set-game')
+    var edit_set_game = document.getElementById('edit-set-tool')
     edit_set_game.innerText = "Chỉnh Tool - " + name
     edit_set_game.removeAttribute("disabled")
 
@@ -250,31 +280,21 @@ function Edit_SetTool(id_list, name, icon, category_id, name_game, folder, param
     previewImg_edit.setAttribute("src", "./images/" + icon);
     preview_edit.appendChild(previewImg_edit);
 
-    var api_id = document.getElementById('api_id-edit')
+    var api_id = document.getElementById('api_id-edit_tool')
     api_id.innerText = id_list
-    category = document.getElementById('category_id-edit').innerText = category_id
 
-    var icon_old = document.getElementById('icon-old-edit')
+    var icon_old = document.getElementById('icon-old-edit_tool')
     icon_old.setAttribute("placeholder", icon)
 
-    var namegame = document.getElementById('name_game-edit')
+    var namegame = document.getElementById('name_tool-edit_tool')
     namegame.setAttribute("placeholder", name_game)
 
-    var folders = document.getElementById('folder-edit')
+    var folders = document.getElementById('folder-edit_tool')
     folders.setAttribute("placeholder", folder)
 
-    var parameters = document.getElementById('parameter-edit')
+    var parameters = document.getElementById('parameter-edit_tool')
     parameters.setAttribute("placeholder", parameter)
 
-    var childitems_edit = document.getElementById("edit_child")
-    while (childitems_edit.firstChild) {
-        childitems_edit.removeChild(childitems_edit.lastChild)
-    }
-
-    child_item = JSON.parse(child_item)
-    for (var key in child_item) {
-        _addinputedit("child", child_item[key], data_child)
-    }
 
 }
 
@@ -333,7 +353,7 @@ function _addGame() {
 //chỉnh sửa game get id từ các element vào mảng và up lên máy chủ
 function _editGame() {
     var api_id = document.getElementById("api_id-edit").textContent
-    var category_id = document.getElementById("category_id-edit")
+    var category_id = document.getElementById("category_id-editget")
     var name_game = document.getElementById("name_game-edit");
     var icon_old = document.getElementById("icon-old-edit");
     var folder = document.getElementById("folder-edit");

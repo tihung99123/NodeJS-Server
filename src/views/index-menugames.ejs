@@ -14,8 +14,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="javascripts/menugames.js"></script>
     <link rel="stylesheet" href="css/dropzone/dropzone.min.css" />
-    <% var List_ItemGames = JSON.parse(List_ItemGames) %>
-        <% var List_Category = JSON.parse(List_Category) %>
+
+
+    <% var List_ItemTools = JSON.parse(List_ItemTools) %>
+        <% var List_ItemGames = JSON.parse(List_ItemGames) %>
+            <% var List_Category = JSON.parse(List_Category) %>
+
+
 </head>
 
 
@@ -25,24 +30,24 @@
         <tr>
             <td>
                 <div>
-                    <div style="display:block ">
+                    <div style="display:block; ">
                         <div style="text-align: center;">
-                            <label style="color: white;">-------------------------------Thể loại------------------------</label>
+                            <label style="color: white;">---------------Thể loại--------------</label>
                             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalAddCategory">Thêm Thể Loại</button>
+                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalSaveListCategory">Lưu Lại</button>
                         </div>
                         <div>
-                            <table class="table">
+                            <table class="table" id="table_category">
                                 <thead>
                                     <tr style="text-align: center;">
                                         <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">ID</th>
                                         <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Tên thể loại</th>
                                         <th scope="col" style="border-left: 1px solid;border-right: 1px solid">Edit</th>
-                                        <th scope="col" style="border-left: 1px solid;border-right: 1px solid;">Lên/Xuống</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="table_tbody_category">
                                     <% for (var key in List_Category) { %>
-                                        <tr>
+                                        <tr id="id_category-<%= key %>" category_name='<%= List_Category[key]["name"] %>'>
                                             <td style="border-left: 1px solid;border-right: 1px solid;">
                                                 <%= List_Category[key]["id"] %>
                                             </td>
@@ -54,14 +59,53 @@
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalEditCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Chỉnh sửa</button>
                                                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalDelCategory" onclick="edit_Category(`<%= List_Category[key]['id'] %>`)">Xoá</button>
                                             </td>
-                                            <td style="border-left: 1px solid;border-right: 1px solid;text-align: center;">
-                                                <button>Lên</button>
-                                                <button>Xuống</button>
-                                            </td>
                                         </tr>
                                         <% } %>
                                 </tbody>
                             </table>
+                            <button onclick="upNdown('up');">&ShortUpArrow;</button>
+                            <button onclick="upNdown('down');">&ShortDownArrow;</button>
+                            <script>
+                                //script khởi tạo di chuyển table trong menugame
+                                var index;
+
+                                getSelectedRow();
+
+                                function getSelectedRow() {
+                                    var table_category = document.getElementById("table_category");
+                                    for (var i = 1; i < table_category.rows.length; i++) {
+                                        table_category.rows[i].onclick = function() {
+                                            if (typeof index !== "undefined") {
+                                                table_category.rows[index].classList.toggle("selected");
+                                            }
+
+                                            index = this.rowIndex;
+                                            this.classList.toggle("selected");
+
+                                        };
+                                    }
+                                }
+
+                                function upNdown(direction) {
+                                    var rows = document.getElementById("table_category").rows,
+                                        parent = rows[index].parentNode;
+                                    if (direction === "up") {
+                                        if (index > 1) {
+                                            parent.insertBefore(rows[index], rows[index - 1]);
+                                            // when the row go up the index will be equal to index - 1
+                                            index--;
+                                        }
+                                    }
+
+                                    if (direction === "down") {
+                                        if (index < rows.length - 1) {
+                                            parent.insertBefore(rows[index + 1], rows[index]);
+                                            // when the row go down the index will be equal to index + 1
+                                            index++;
+                                        }
+                                    }
+                                }
+                            </script>
                         </div>
                     </div>
                 </div>
@@ -77,11 +121,20 @@
                         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ModalSaveListTools">Lưu Lại</button>
                     </div>
                     <div id="basic-grid_tool" class="row text-center">
-                        <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_tools-" api_id="" ondblclick="Edit_SetTool()">
-                            <img src="./images/" disabled>
-                            <div class="text-items">
+                        <% for (var key in List_ItemTools) { %>
+                            <div class="col-xs-12 col-sm-6 col-md-1 col1 container" id="id_tools-<%= key %>" api_id="<%= List_ItemTools[key]['id_list'] %>" ondblclick="Edit_SetTool(`<%= List_ItemTools[key]['id_list'] %>`,
+                                        `<%= List_ItemTools[key]['name_tool'] %>`,
+                                        `<%= List_ItemTools[key]['icon'] %>`,
+                                        `<%= List_ItemTools[key]['name_tool'] %>`,
+                                        `<%= List_ItemTools[key]['folder'] %>`,
+                                        `<%= List_ItemTools[key]['parameter'] %>`,
+                                        `<%= JSON.stringify(IdandName) %>` )">
+                                <img src="./images/<%= List_ItemTools[key]['icon'] %>" disabled>
+                                <div class="text-items">
+                                    <%= List_ItemTools[key]['name_tool'] %>
+                                </div>
                             </div>
-                        </div>
+                            <% } %>
                     </div>
                 </div>
             </td>
@@ -234,6 +287,29 @@
         </div>
     </div>
 
+
+    <!-- Modal lưu danh sách thể loại -->
+    <div class="modal fade" id="ModalSaveListCategory" tabindex="-1" role="dialog" aria-labelledby="ModalSaveListCategoryLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ModalSaveListCategoryLabel">Lưu Lại danh sách thể loại</h5>
+                    <button type="button" class="close1" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+                </div>
+                <div class="modal-body">
+                    Bạn sẽ lưu lại chứ, nếu lưu đồng thời sẽ không sắp xếp lại như lúc trước ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
+                    <button type="submit" class="btn btn-primary" onclick="CHECKOKSAVE_Category()">Chấp nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <!-- Modal Thêm Tool -->
     <div class="modal fade" id="ModalAddTool" tabindex="-1" role="dialog" aria-labelledby="ModalAddToolLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
@@ -252,10 +328,10 @@
                             <div class="uploadOuter dropzone" id="dropzone-imageicontool" style="display: inline-block;">
                                 <span class="dragBox">
                                     Nhấp hoặc kéo thả vào đây!
-                                    <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddTool"/>
+                                    <input type="file" onChange="dragNdrop_tool(event)"  ondragover="drag()" ondrop="drop()" id="AddTool"/>
                                 </span>
                             </div>
-                            <div id="preview" style="display: inline-block;width: 35%;"></div>
+                            <div id="preview-tool" style="display: inline-block;width: 35%;"></div>
                         </div>
                         <div>
                             <table>
@@ -322,36 +398,35 @@
                             <div class="uploadOuter dropzone" id="dropzone-imageicontool" style="display: inline-block;">
                                 <span class="dragBox">
                                     Nhấp hoặc kéo thả vào đây!
-                                    <input type="file" onChange="dragNdrop_edit(event)"  ondragover="drag()" ondrop="drop()" id="EditTool"  />
+                                    <input type="file" onChange="dragNdrop_tool_edit(event)"  ondragover="drag()" ondrop="drop()" id="EditTool"  />
                                 </span>
                             </div>
-                            <div id="preview-edit" style="display: inline-block;width: 35%;"></div>
+                            <div id="preview-tool-edit" style="display: inline-block;width: 35%;"></div>
                         </div>
                         <div>
                             <table>
                                 <tr>
                                     <td>API / ID Tool:</td>
-                                    <td id="api_id-edit"></td>
+                                    <td id="api_id-edit_tool"></td>
                                 </tr>
                                 <tr>
                                     <td>Tên Tool:</td>
-                                    <td><input type="text" placeholder="Nhập tên" id="name_tool-edit">
-                                        <input type="text" id="icon-tool-old-edit" hidden></td>
+                                    <td><input type="text" id="name_tool-edit_tool">
+                                        <input type="text" id="icon-old-edit_tool" hidden></td>
                                 </tr>
                                 <tr>
                                     <td>Thư Mục:</td>
-                                    <td><input type="text" placeholder="Nhập đường dẫn" id="folder-tool-edit"></td>
+                                    <td><input type="text" id="folder-edit_tool"></td>
                                 </tr>
                                 <tr>
                                     <td>Hậu tố:</td>
-                                    <td><input type="text" placeholder="Nhập hậu tố" id="parameter-tool-edit"></td>
+                                    <td><input type="text" id="parameter-edit_tool"></td>
                                 </tr>
                             </table>
                         </div>
                     </body>
                 </div>
                 <div class="modal-footer">
-                    <input hidden id="del-typetoolinput" name="typetool">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
                     <button type="submit" class="btn btn-danger" onclick="_delTool()">Xoá</button>
                     <button type="submit" class="btn btn-primary" onclick="_editTool()">Chấp nhận</button>
@@ -381,7 +456,7 @@
                                     <input type="file" onChange="dragNdrop(event)"  ondragover="drag()" ondrop="drop()" id="AddGame"/>
                                 </span>
                             </div>
-                            <div id="preview" style="display: inline-block;width: 35%;"></div>
+                            <div id="preview-game" style="display: inline-block;width: 35%;"></div>
                             <div>Lấy ảnh từ URL:
                                 <button onclick="getImageFromURL()">Nhấn vào</button>
                             </div>
@@ -453,7 +528,7 @@
                 <div class="modal-footer">
                     <input hidden id="del-typegameinput" name="typegame">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Huỷ bỏ</button>
-                    <button type="submit" class="btn btn-primary" onclick="CHECKOKSAVE()">Chấp nhận</button>
+                    <button type="submit" class="btn btn-primary" onclick="CHECKOKSAVE_Game()">Chấp nhận</button>
                 </div>
             </div>
         </div>
@@ -490,12 +565,13 @@
                                 </tr>
                                 <tr>
                                     <td>Thể Loại:</td>
-                                    <td><select class="form-select" aria-label="Default select example">
-                                        <option id="category_id-edit" selected>Bấm vào để chọn thể loại</option>
+                                    <td><select id="category_id-editget" class="form-select" aria-label="Default select example">
+                                        <option id="category_id-edit" selected></option>
                                         <% for (var key in List_Category) { %>
                                         <option value="<%= List_Category[key]['name'] %>"><%= List_Category[key]["name"] %></option>
                                         <% } %>
-                                      </select></td>
+                                      </select>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>Tên Game:</td>
