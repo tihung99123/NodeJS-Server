@@ -4,7 +4,7 @@ const multer = require('multer');
 var menugamesController = require("../controller/menugamesController")
 
 var router = express.Router()
-const upload = multer({ dest: 'src/public/images/' }); // setting thư mục khi upload hình ảnh lên máy chủ
+const upload = multer({ dest: 'public/images/' }); // setting thư mục khi upload hình ảnh lên máy chủ
 //khởi tạo trang chính
 router.get("/menugames", menugamesController.getHomepage)
 

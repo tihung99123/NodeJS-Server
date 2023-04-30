@@ -1,7 +1,5 @@
 var menugamesModels = require('../models/menugamesModels')
 
-const { PythonShell } = require('python-shell');
-
 const Type = process.env.TYPE_SQL || "sqlite"
 
 // khởi tạo trang chính và gửi danh sách thể loại 
@@ -74,17 +72,6 @@ let saveListTool = async(req, res) => {
 // thêm tool
 //bao gồm hình ảnh, tên tool, thư mục tool, hậu tố
 let addTool = async(req, res) => {
-    let options = {
-        mode: 'text',
-        pythonOptions: ['-u'],
-        scriptPath: 'py_services/',
-        args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
-    };
-    PythonShell.run('imageprocess.py', options, function(err, result) {
-        if (err) throw err;
-        console.log('result: ', result.toString());
-    });
-
     let addaccount = req.body.AddTool
     let icontool = req.file
     menugamesModels.addTool(addaccount, icontool, function(err, result) {
@@ -100,19 +87,6 @@ let addTool = async(req, res) => {
 //chỉnh sửa tool
 //bao gồm hình ảnh, tên tool, thư mục tool, hậu tố
 let editTool = async(req, res) => {
-    if (req.file != undefined) {
-        let options = {
-            mode: 'text',
-            pythonOptions: ['-u'],
-            scriptPath: 'py_services/',
-            args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
-        };
-        PythonShell.run('imageprocess.py', options, function(err, result) {
-            if (err) throw err;
-            console.log('result: ', result.toString());
-        });
-    }
-
     let addaccount = req.body.EditTool
     let icontool = req.file
     menugamesModels.editTool(addaccount, icontool, function(result) {
@@ -142,17 +116,6 @@ let saveListGame = async(req, res) => {
 // thêm game
 //bao gồm hình ảnh, thể loại, tên game, thư mục game, hậu tố, và danh sách đề xuất vào modal
 let addGame = async(req, res) => {
-    let options = {
-        mode: 'text',
-        pythonOptions: ['-u'],
-        scriptPath: 'py_services/',
-        args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
-    };
-    PythonShell.run('imageprocess.py', options, function(err, result) {
-        if (err) throw err;
-        console.log('result: ', result.toString());
-    });
-
     let addaccount = req.body.AddGame
     let icongame = req.file
     menugamesModels.addGame(addaccount, icongame, function(err, result) {
@@ -168,19 +131,6 @@ let addGame = async(req, res) => {
 //chỉnh sửa game
 //bao gồm hình ảnh, thể loại, tên game, thư mục game, hậu tố, và danh sách đề xuất vào modal
 let editGame = async(req, res) => {
-    if (req.file != undefined) {
-        let options = {
-            mode: 'text',
-            pythonOptions: ['-u'],
-            scriptPath: 'py_services/',
-            args: ["http://127.0.0.1:3000/images/" + req.file.filename, "src/public/images/" + req.file.filename]
-        };
-        PythonShell.run('imageprocess.py', options, function(err, result) {
-            if (err) throw err;
-            console.log('result: ', result.toString());
-        });
-    }
-
     let addaccount = req.body.EditGame
     let icongame = req.file
     menugamesModels.editGame(addaccount, icongame, function(result) {

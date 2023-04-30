@@ -10,7 +10,7 @@ const http = require('http');
 const httpServer = http.Server(app);
 const socketio = require('./socketio/server')
 
-
+var ftp_srv = require("./ftp-srv/server")
 
 require('dotenv').config()
 const port = process.env.PORT || 8080;
@@ -18,7 +18,12 @@ const bodyParser = require('body-parser')
 var urlencodedParser = bodyParser.urlencoded({ extended: true })
 app.use(express.json());
 
+//khởi tạo socketio
 socketio(httpServer)
+
+//khởi tạo server FTP
+ftp_srv("admin", "1Qw", 22, "/")
+
 viewEngine(app)
 
 app.use('/', urlencodedParser, homeRouter)

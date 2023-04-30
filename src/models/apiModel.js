@@ -2,6 +2,7 @@ var dbpool = require('../config/connectDB')
 require('dotenv').config()
 const Type = process.env.TYPE_SQL || "sqlite"
 
+
 // -------------------------RENTACCOUNT-------------------------------------
 // Lấy toàn bộ thông tin trong Rentacc đồng thời tạo file json
 let getAllRentAccount = async() => {
@@ -96,9 +97,20 @@ let getAllItemGames = async() => {
     }
 }
 
-// Lấy ItemGames bằng Id
+// Lấy ItemTools bằng Id
+let getItemToolById = async(id) => {
+        var sql = "SELECT * FROM menugames_itemtools WHERE id_list = ?;"
+        if (Type == "mysql") {
+            let itemgame = await dbpool.promise().query(sql, [id])
+            return { ItemGame: itemgame[0] }
+        } else if (Type == "sqlite") {
+            let itemgame = await dbpool.get(sql, [id])
+            return { ItemGame: itemgame }
+        }
+    }
+    // Lấy ItemGames bằng Id
 let getItemGameById = async(id) => {
-    var sql = "SELECT * FROM `menugames_itemgames` WHERE id_list = ?;"
+    var sql = "SELECT * FROM menugames_itemgames WHERE id_list = ?;"
     if (Type == "mysql") {
         let itemgame = await dbpool.promise().query(sql, [id])
         return { ItemGame: itemgame[0] }
@@ -128,6 +140,7 @@ module.exports = {
     getAllCategory,
     getAllItemTools,
     getAllItemGames,
+    getItemToolById,
     getItemGameById,
     getItemGameByCategory
 }

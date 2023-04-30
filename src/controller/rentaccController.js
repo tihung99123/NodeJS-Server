@@ -89,4 +89,12 @@ let delAccount = async(req, res) => {
 }
 
 
-module.exports = { getHomepage, addTypeGame, editTypeGame, delTypeGame, addAccount, editAccount, delAccount }
+module.exports = {
+    getHomepage,
+    addTypeGame,
+    editTypeGame,
+    delTypeGame,
+    addAccount,
+    editAccount,
+    delAccount
+}
