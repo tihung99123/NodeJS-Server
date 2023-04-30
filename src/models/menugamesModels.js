@@ -1,7 +1,8 @@
+var services = require('../services/menugames')
 var dbpool = require("../config/connectDB")
-var fs = require('fs')
 require('dotenv').config()
 const Type = process.env.TYPE_SQL || "sqlite"
+const homePage = "/menugames"
 
 // Lấy thông tin các Category của DB
 let getAllCategory = async() => {
@@ -70,11 +71,11 @@ module.exports = {
                                 callback("Lỗi:", err);
                             } else {
                                 dbpool.execute('insert into menugames_category(id, name) values (?, ?)', [count[0]["count"] + 1, category_name]);
-                                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
+                                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "${homePage}"; </script>`)
                             }
                         })
                     } else {
-                        return callback(null, `<script>window.alert("Thêm Thất Bại Vì đã trùng thể loại"); window.location.href = "/menugames"; </script>`)
+                        return callback(null, `<script>window.alert("Thêm Thất Bại Vì đã trùng thể loại"); window.location.href = "${homePage}"; </script>`)
                     }
                 }
             })
@@ -89,11 +90,11 @@ module.exports = {
                                 callback("Lỗi:", err);
                             } else {
                                 dbpool.db.run('insert into menugames_category(id, name) values (?, ?)', [count[0]["count"] + 1, category_name]);
-                                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "/menugames"; </script>`)
+                                callback(null, `<script>window.alert("Thêm Thành công"); window.location.href = "${homePage}"; </script>`)
                             }
                         })
                     } else {
-                        return callback(null, `<script>window.alert("Thêm Thất Bại Vì đã trùng thể loại"); window.location.href = "/menugames"; </script>`)
+                        return callback(null, `<script>window.alert("Thêm Thất Bại Vì đã trùng thể loại"); window.location.href = "${homePage}"; </script>`)
                     }
                 }
             })
@@ -106,7 +107,7 @@ module.exports = {
                 if (err) {
                     callback(null, `<script>window.alert("chỉnh sửa Thất Bại Vì đã trùng thể loại");</script>`)
                 } else {
-                    callback(null, `<script>window.alert("Chỉnh sửa thành công"); window.location.href = "/menugames"; </script>`)
+                    callback(null, `<script>window.alert("Chỉnh sửa thành công"); window.location.href = "${homePage}"; </script>`)
                 }
             })
         } else if (Type == "sqlite") {
@@ -114,7 +115,7 @@ module.exports = {
                 if (err) {
                     callback(null, `<script>window.alert("chỉnh sửa Thất Bại Vì đã trùng thể loại");</script>`)
                 } else {
-                    callback(null, `<script>window.alert("Chỉnh sửa thành công"); window.location.href = "/menugames"; </script>`)
+                    callback(null, `<script>window.alert("Chỉnh sửa thành công"); window.location.href = "${homePage}"; </script>`)
                 }
             })
         }
@@ -124,11 +125,11 @@ module.exports = {
         if (Type == "mysql") {
             dbpool.execute('DELETE FROM `menugames_category` WHERE id = ?;', [id])
             dbpool.execute('UPDATE menugames_itemgames SET category_id = NULL WHERE category_id = ? ;', [name])
-            callback("/menugames")
+            callback(homePage)
         } else if (Type == "sqlite") {
             dbpool.db.run(`DELETE FROM menugames_category WHERE id = ?`, [id])
             dbpool.db.run('UPDATE menugames_itemgames SET category_id = NULL WHERE category_id = ?', [name])
-            callback("/menugames")
+            callback(homePage)
         }
     },
     // lấy dữ liệu từ controller và lưu sắp sếp thứ tự category
@@ -138,13 +139,13 @@ module.exports = {
             for (var key in saved_listcategory) {
                 dbpool.execute('insert into menugames_sortorder_category(number, category_name) values (?, ?)', [saved_listcategory[key].number, saved_listcategory[key].category_name])
             }
-            callback("/menugames")
+            callback(homePage)
         } else if (Type == "sqlite") {
             dbpool.db.run('DELETE FROM `menugames_sortorder_category`')
             for (var key in saved_listcategory) {
                 dbpool.db.run('insert into menugames_sortorder_category(number, category_name) values (?, ?)', [saved_listcategory[key].number, saved_listcategory[key].category_name])
             }
-            callback("/menugames")
+            callback(homePage)
         }
     },
     // lấy dữ liệu từ controller và lưu sắp sếp thứ tự
@@ -154,18 +155,18 @@ module.exports = {
             for (var key in saved_listtool) {
                 dbpool.execute('insert into menugames_sortorder_tool(number, id_list, id_name) values (?, ?, ?)', [saved_listtool[key].number, saved_listtool[key].api_id, saved_listtool[key].api_id])
             }
-            callback("/menugames")
+            callback(homePage)
         } else if (Type == "sqlite") {
             dbpool.db.run('DELETE FROM `menugames_sortorder_tool`')
             for (var key in saved_listtool) {
                 dbpool.db.run('insert into menugames_sortorder_tool(number, id_list, id_name) values (?, ?, ?)', [saved_listtool[key].number, saved_listtool[key].api_id, saved_listtool[key].api_id])
             }
-            callback("/menugames")
+            callback(homePage)
         }
     },
     // thêm tool vào menu bao gồm tất cả các thông tin chỉ số và các tham số hậu tố khác vào db
     addTool: function(addaccount, icontool, callback = () => {}) {
-        // console.log(addaccount);
+        services.processPicture('127.0.0.1', 3000, 'py_services', 'imageprocess.py', icontool.filename, icontool.filename)
         if (Type == "mysql") {
             dbpool.query("INSERT INTO `menugames_itemtools`(`id_list`, `id_name`, `name_tool`, `icon`, `folder`, `parameter`) VALUES ( ?, ?, ?, ?, ?, ?)", [icontool.filename, icontool.filename, addaccount[0], icontool.filename, addaccount[1].replace(/\\/g, "/"), addaccount[2]], function(err, addTool) {
                 if (err) {
@@ -206,12 +207,9 @@ module.exports = {
                 callback("1-Chinh sửa thành công")
             } else {
                 dbpool.execute(`UPDATE menugames_itemtools SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',name_tool='${addaccount[1]}',icon='${icontool.filename}',folder='${addaccount[2].replace(/\\/g, "/")}',parameter='${addaccount[3]}' WHERE id_list ='${addaccount[0]}';`)
-                fs.unlink('./src/public/images/' + addaccount[3], (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log("Xoá thành công.");
-                });
+                services.processPicture('127.0.0.1', 3000, 'py_services', 'imageprocess.py', icontool.filename, icontool.filename)
+
+                services.deleteFile(addaccount[3])
                 callback("2-Chinh sửa thành công")
             }
         } else if (Type == "sqlite") {
@@ -220,12 +218,8 @@ module.exports = {
                 callback("1-Chinh sửa thành công")
             } else {
                 dbpool.db.run(`UPDATE menugames_itemtools SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',name_tool='${addaccount[1]}',icon='${icontool.filename}',folder='${addaccount[2].replace(/\\/g, "/")}',parameter='${addaccount[3]}' WHERE id_list ='${addaccount[0]}';`)
-                fs.unlink('./src/public/images/' + addaccount[3], (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log("Xoá thành công.");
-                });
+                services.processPicture('127.0.0.1', 3000, 'py_services', 'imageprocess.py', icontool.filename, icontool.filename)
+                services.deleteFile(addaccount[3])
                 callback("2-Chinh sửa thành công")
             }
         }
@@ -235,23 +229,12 @@ module.exports = {
     delTool: function(delTool, callback = () => {}) {
         if (Type == "mysql") {
             dbpool.execute(`DELETE FROM menugames_itemtools WHERE id_list = ?`, [delTool.api_id])
-            fs.unlink('./src/public/images/' + delTool.icon_old, (err) => {
-                if (err) {
-                    throw err;
-                }
-                console.log("Xoá thành công.");
-                callback("/menugames")
-            });
+            services.deleteFile(delTool.icon_old)
         } else if (Type == "sqlite") {
             dbpool.db.run(`DELETE FROM menugames_itemtools WHERE id_list = ?`, [delTool.api_id])
-            fs.unlink('./src/public/images/' + delTool.icon_old, (err) => {
-                if (err) {
-                    throw err;
-                }
-                console.log("Xoá thành công.");
-                callback("/menugames")
-            });
+            services.deleteFile(delTool.icon_old)
         }
+        callback(homePage)
     },
     // lấy dữ liệu từ controller và lưu sắp sếp thứ tự
     saveListGame: function(saved_listgame, callback = () => {}) {
@@ -260,18 +243,19 @@ module.exports = {
             for (var key in saved_listgame) {
                 dbpool.execute('insert into menugames_sortorder_game(number, id_list, id_name) values (?, ?, ?)', [saved_listgame[key].number, saved_listgame[key].api_id, saved_listgame[key].api_id])
             }
-            callback("/menugames")
+            callback(homePage)
         } else if (Type == "sqlite") {
             dbpool.db.run('DELETE FROM `menugames_sortorder_game`')
             for (var key in saved_listgame) {
                 dbpool.db.run('insert into menugames_sortorder_game(number, id_list, id_name) values (?, ?, ?)', [saved_listgame[key].number, saved_listgame[key].api_id, saved_listgame[key].api_id])
             }
-            callback("/menugames")
+            callback(homePage)
         }
     },
     // thêm game vào menu bao gồm tất cả các thông tin chỉ số và các tham số hậu tố khác vào db
     addGame: function(addaccount, icongame, callback = () => {}) {
-        // console.log(addaccount);
+        services.processPicture('127.0.0.1', 3000, 'py_services', 'imageprocess.py', icongame.filename, icongame.filename)
+            // console.log(addaccount);
         if (Type == "mysql") {
             dbpool.query("INSERT INTO `menugames_itemgames`(`id_list`, `id_name`, `category_id`, `name_game`, `icon`, `folder`, `parameter`, `child_id_list`) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)", [icongame.filename, icongame.filename, addaccount[0], addaccount[1], icongame.filename, addaccount[2].replace(/\\/g, "/"), addaccount[3], addaccount[4]], function(err, addGame) {
                 if (err) {
@@ -316,12 +300,8 @@ module.exports = {
                 callback("1-Chinh sửa thành công")
             } else {
                 dbpool.execute(`UPDATE menugames_itemgames SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',category_id='${addaccount[1]}',name_game='${addaccount[2]}',icon='${icongame.filename}',folder='${addaccount[4].replace(/\\/g, "/")}',parameter='${addaccount[5]}',child_id_list='${addaccount[6]}' WHERE id_list ='${addaccount[0]}';`)
-                fs.unlink('./src/public/images/' + addaccount[3], (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log("Xoá thành công.");
-                });
+                services.processPicture('127.0.0.1', 3000, 'py_services', 'imageprocess.py', icongame.filename, icongame.filename)
+                services.deleteFile(addaccount[3])
                 callback("2-Chinh sửa thành công")
             }
         } else if (Type == "sqlite") {
@@ -330,12 +310,8 @@ module.exports = {
                 callback("1-Chinh sửa thành công")
             } else {
                 dbpool.db.run(`UPDATE menugames_itemgames SET id_list='${addaccount[0]}',id_name='${addaccount[0]}',category_id='${addaccount[1]}',name_game='${addaccount[2]}',icon='${icongame.filename}',folder='${addaccount[4].replace(/\\/g, "/")}',parameter='${addaccount[5]}',child_id_list='${addaccount[6]}' WHERE id_list ='${addaccount[0]}';`)
-                fs.unlink('./src/public/images/' + addaccount[3], (err) => {
-                    if (err) {
-                        throw err;
-                    }
-                    console.log("Xoá thành công.");
-                });
+                services.processPicture('127.0.0.1', 3000, 'py_services', 'imageprocess.py', icongame.filename, icongame.filename)
+                services.deleteFile(addaccount[3])
                 callback("2-Chinh sửa thành công")
             }
         }
@@ -344,22 +320,10 @@ module.exports = {
     delGame: function(delGame, callback = () => {}) {
         if (Type == "mysql") {
             dbpool.execute(`DELETE FROM menugames_itemgames WHERE id_list = ?`, [delGame.api_id])
-            fs.unlink('./src/public/images/' + delGame.icon_old, (err) => {
-                if (err) {
-                    throw err;
-                }
-                console.log("Xoá thành công.");
-                callback("/menugames")
-            });
+            services.deleteFile(delGame.icon_old)
         } else if (Type == "sqlite") {
             dbpool.db.run(`DELETE FROM menugames_itemgames WHERE id_list = ?`, [delGame.api_id])
-            fs.unlink('./src/public/images/' + delGame.icon_old, (err) => {
-                if (err) {
-                    throw err;
-                }
-                console.log("Xoá thành công.");
-                callback("/menugames")
-            });
+            services.deleteFile(delGame.icon_old)
         }
     }
 }
